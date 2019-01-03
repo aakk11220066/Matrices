@@ -35,6 +35,9 @@ namespace MtmMath {
          * Performs transpose operation on matrix
          */
         void transpose();
+
+        //Roi
+        virtual T& operator[](int index);
     };
 }
 

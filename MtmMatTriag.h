@@ -14,7 +14,7 @@ namespace MtmMath {
 
 
     template <typename T>
-    class MtmMatTriag : public MtmMatSq {
+    class MtmMatTriag : public MtmMatSq<T> {
         //checks if given MtmMatSq is also upper triangular
         bool isUpper(const MtmMatSq<T>& mat) const;
 
@@ -40,6 +40,11 @@ namespace MtmMath {
 
         //constructor for normal/square matrices to triangular
         MtmMatTriag<T>& (const MtmMatSq& original);
+
+        T& operator[](int index) override {
+            if (index>dimensions.getRow()) throw MtmExceptions::AccessIllegalElement(); //FIXME: add error info
+            return (*this)[index]; //TODO: Is this okay?
+        };
     };
 
 }
@@ -57,10 +62,7 @@ template <typename T>
 MtmMatTriag<T>::MtmMatTriag(const MtmMatSq& original) :
     MtmMatSq(original) {
 
-    //if upper - triangulate to upper
-    //if lower - leave, otherwise triangulate to upper TODO: MAKE SURE and then finish function
-    if isUpper(original) return;
-    ...
+    if (!isUpper(original)) throw MtmExceptions::IllegalInitialization(); //FIXME: add error info
 }
 
 template <typename T>
