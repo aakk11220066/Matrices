@@ -18,6 +18,11 @@ namespace MtmMath {
         MtmVec(size_t m, const T& val=T());
 
 
+        //Roi : please implement (or else I will).  Should be 1 line, use vecFunc
+        //Scalar multiplication (returns new vector)
+        MtmVec<T> operator*(const T& scalar);
+
+
         /*
          * Function that get function object f and uses it's () operator on each element in the vectors.
          * It outputs the function object's * operator after iterating on all the vector's elements

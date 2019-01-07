@@ -8,18 +8,22 @@
 #include "MtmMatSq.h"
 
 using std::size_t;
-using namespace MtmMath;
 
 namespace MtmMath {
-
+    enum TriangleType{NEITHER, UPPER, LOWER};
 
     template <typename T>
     class MtmMatTriag : public MtmMatSq<T> {
-        //checks if given MtmMatSq is also upper triangular
-        bool isUpper(const MtmMatSq<T>& mat) const;
+        /* checks if given MtmMatSq is also upper/lower triangular or neither.
+         * By default selects upper
+         */
+        TriangleType isUpperOrLower(const MtmMatSq<T>& mat) const;
 
-        //zeroes out top/bottom triangle of matrix
-        void triangulate(MtmMatSq<T>& mat, bool makeUpper) const;
+        //takes square matrix and zeroes out top/bottom triangle
+        void triangulate(MtmMatSq<T> target, bool makeUpper);
+
+        bool upper = true;
+
     public:
 
         /*
@@ -32,63 +36,82 @@ namespace MtmMath {
         //copy constructor
         MtmMatTriag<T> (const MtmMatTriag& original) = default;
 
+        //constructor for normal/square matrices to triangular
+        MtmMatTriag<T> (const MtmMatSq<T>& original);
+
         //destructor
-        ~MtmMatTriag<T> () = default;
+        virtual ~MtmMatTriag<T> () = default;
 
         //operator=
-        MtmMatTriag<T>& operator=(const MtmMatTriag&) = default;
+        virtual MtmMatTriag<T>& operator=(const MtmMatTriag&) = default;
 
-        //constructor for normal/square matrices to triangular
-        MtmMatTriag<T>& (const MtmMatSq& original);
-
+        //override: ensure user does not change bottom/top triangle illegally
         T& operator[](int index) override {
-            if (index>dimensions.getRow()) throw MtmExceptions::AccessIllegalElement(); //FIXME: add error info
-            return (*this)[index]; //TODO: Is this okay?
+            //TODO: ensure user does not change bottom/top triangle illegally
+            return MtmVec<T>::operator[](index);
         };
+
+        //override: note that triangle is now opposite kind of triangle
+        void transpose() override {
+            upper = !upper;
+            MtmMatSq<T>::transpose();
+        }
+
+        //override: triangulate after resizing
+        void resize(Dimensions dim, const T& val=T()) override {
+            MtmMatSq<T>::resize(dim, val);
+            triangulate(*this, upper);
+        }
+
     };
 
 }
 
-
 //implementation begins here
+using namespace MtmMath;
+
 template <typename T>
 MtmMatTriag<T>::MtmMatTriag(size_t m, const T& val, bool isUpper_t) :
-    MtmMatSq(m, val){
+    MtmMatSq<T>(m, val){
 
     triangulate (*this, isUpper_t);
+    upper = isUpper_t;
 }
 
 template <typename T>
-MtmMatTriag<T>::MtmMatTriag(const MtmMatSq& original) :
-    MtmMatSq(original) {
+MtmMatTriag<T>::MtmMatTriag (const MtmMatSq<T>& original) :
+    MtmMatSq<T>(original) {
 
-    if (!isUpper(original)) throw MtmExceptions::IllegalInitialization(); //FIXME: add error info
-}
-
-template <typename T>
-void MtmMatTriag<T>::triangulate(MtmMatSq<T> &mat, bool makeUpper) const {
-    int m = mat.dimensions.getRow();
-    for (int row = 0; row < m; ++row) { //zero out top or bottom of matrix
-        for (int col = 0; col < m; ++col) {
-            if ((row < col && !makeUpper) || (row > col && makeUpper)) {
-                mat[row][col] = 0;
-            }
-        }
-    }
+    TriangleType triangleType = isUpperOrLower(original);
+    if (triangleType = NEITHER) throw MtmExceptions::IllegalInitialization();
+    upper = (triangleType==UPPER);
 }
 
 template<typename T>
-bool MtmMatTriag<T>::isUpper(const MtmMatSq<T> &mat) const {
-    int m = mat.dimensions.getRow();
+TriangleType MtmMatTriag<T>::isUpperOrLower(const MtmMatSq<T> &mat) const {
+    size_t m = mat.dimensions.getRow();
+    bool isUpper = true, isLower = true;
     for (int row = 0; row < m; ++row) {
         for (int col = 0; col < m; ++col) {
-            if (row>col && mat[row][col]!=0) { //found nonzero beneath diagonal
-                return false;
+            //found nonzero beneath (next line: above) diagonal
+            if (row>col && mat[row][col]!=0) isUpper = false;
+            if (row<col && mat[row][col]!=0) isLower = false;
+        }
+    }
+    TriangleType pre_answer = (isLower)? LOWER : NEITHER;
+    return (isUpper)? UPPER : pre_answer;
+}
+
+template<typename T>
+void MtmMatTriag<T>::triangulate(MtmMatSq <T> target, bool makeUpper) {
+    size_t m = target.dimensions.getRow();
+    for (int row = 0; row < m; ++row) {
+        for (int col = 0; col < m; ++col) {
+            if ((row>col && makeUpper) || (row<col && !makeUpper)) {
+                target[row][col] = 0;
             }
         }
     }
-    return true;
 }
-
 
 #endif //EX3_MTMMATTRIAG_H

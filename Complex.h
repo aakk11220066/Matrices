@@ -6,10 +6,10 @@ namespace MtmMath {
     class Complex {
         double re, im;
     public:
-        explicit Complex(double r = 0, double i = 0) :
+        Complex(double r = 0, double i = 0) : //Roi : I removed "virtual" keyword, constructor should accept automatic promotion (e.g. putting 0 into matrix of complex numbers)
                 re(r), im(i) {}
 
-        ~Complex() = default;
+        virtual ~Complex() = default; //Roi : all destructors should be virtual (prevents bugs when making polymorphisms)
 
         Complex(const Complex &) = default;
 

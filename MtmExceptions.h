@@ -6,12 +6,16 @@
 #include <iostream>
 #include "Auxilaries.h"
 
+using std::to_string;
+
 namespace MtmMath {
     namespace MtmExceptions {
         class MtmExceptions : public std::exception {
         protected:
-            std::string description("MY IDIOT PROGRAMMER IS OUT TO LUNCH.");
+            std::string description;
         public:
+            MtmExceptions(std::string description) : description(description){}
+            const char* what() const noexcept {return description.c_str();}
             virtual ~MtmExceptions() throw() {}
         };
 
@@ -20,7 +24,9 @@ namespace MtmMath {
          * "MtmError: Illegal initialization values" in what() class function
          */
         class IllegalInitialization : public MtmExceptions {
-                //TODO: add constructor which sets description
+        public:
+            IllegalInitialization()
+                : MtmExceptions("MtmError: Illegal initialization values"){}
         };
 
         /*
@@ -28,7 +34,9 @@ namespace MtmMath {
          * "MtmError: Out of memory" in what() class function
          */
         class OutOfMemory : public MtmExceptions {
-            //TODO: add constructor which sets description
+        public:
+            OutOfMemory()
+                    : MtmExceptions("MtmError: Out of memory"){}
         };
 
         /*
@@ -37,8 +45,15 @@ namespace MtmMath {
          * in what() class function
          */
         class DimensionMismatch : public MtmExceptions {
-            //TODO: add constructor which sets description
-
+        public:
+            DimensionMismatch(Dimensions mat1Dimensions,
+                    Dimensions mat2Dimensions) : MtmExceptions( (std::string)
+                            "MtmError: Dimension mismatch: ("
+                            += (to_string(mat1Dimensions.getRow()) += ",")
+                            += (to_string(mat1Dimensions.getCol()) += ") (")
+                            += (to_string(mat1Dimensions.getRow()) += ",")
+                            += to_string(mat2Dimensions.getCol()) += ")"
+                            ) {}
         };
 
         /*
@@ -47,8 +62,15 @@ namespace MtmMath {
          * in what() class function
          */
         class ChangeMatFail : public MtmExceptions {
-            //TODO: add constructor which sets description
-
+        public:
+            ChangeMatFail(Dimensions oldMatDimensions,
+                    Dimensions newMatDimensions) : MtmExceptions( (std::string)
+                    "MtmError: Dimension mismatch: ("
+                    += (to_string(oldMatDimensions.getRow()) += ",")
+                    += (to_string(oldMatDimensions.getCol()) += ") (")
+                    += (to_string(newMatDimensions.getRow()) += ",")
+                    += (to_string(newMatDimensions.getCol()) += ")")
+                    ){}
         };
 
         /*
@@ -56,8 +78,9 @@ namespace MtmMath {
          * "MtmError: Illegal initialization values" in what() class function
          */
         class AccessIllegalElement : public MtmExceptions {
-            //TODO: add constructor which sets description
-        };
+        public:
+            AccessIllegalElement()
+                    : MtmExceptions("MtmError: Illegal initialization values"){}
     }
 }
 
