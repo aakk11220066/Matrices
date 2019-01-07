@@ -39,13 +39,19 @@ namespace MtmMath {
          * row i of new matrix equals sum of scalar products of jth element of
          * row i of A * row j of B
          */
-        MtmMat<T> operator*(MtmMat<T> other);
+        friend MtmMat<T> operator*(const MtmMat<T> matrix1,
+                const MtmMat<T> matrix2);
 
-        /*
-         * Function that get function object f and uses it's () operator on each element in the matrix columns.
-         * It outputs a vector in the size of the matrix columns where each element is the final output
-         * by the function object's * operator
-         */
+        //Matrix addition
+        friend MtmMat<T> operator+(const MtmMat<T> matrix1,
+                const MtmMat<T> matrix2);
+
+
+    /*
+     * Function that get function object f and uses it's () operator on each element in the matrix columns.
+     * It outputs a vector in the size of the matrix columns where each element is the final output
+     * by the function object's * operator
+     */
         template <typename Func>
         MtmVec<T> matFunc(Func& f) const;
 
@@ -77,21 +83,41 @@ MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
     }
 
 template <typename T>
-MtmMat<T> MtmMat<T>::operator*(MtmMat<T> other){
-    const size_t n = dimensions.getCol();
-    if (n != other.dimensions.getRows()){
-        throw MtmExceptions::DimensionMismatch(dimensions, other.dimensions);
+MtmMat<T> operator*(const MtmMat<T> matrix1, const MtmMat<T> matrix2){
+    const size_t n = matrix1.dimensions.getCol();
+    if (n != matrix2.dimensions.getRows()){
+        throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
+                matrix2.dimensions);
     }
 
-    const size_t numRows = dimensions.getRow(),numCols = other.dimensions.getCol();
+    const size_t numRows = matrix1.dimensions.getRow();
+    const size_t numCols = matrix2.dimensions.getCol();
     MtmMat<T> answer(Dimensions(numRows, numCols), 0);
     for (int answerRow=0; answerRow < numRows; ++answerRow){
         for (int runner=0; runner<n; ++runner){
             answer[answerRow] = answer[answerRow]
-                    + ((*this)[answerRow][runner] * other[runner]);
+                    + (matrix1[answerRow][runner] * matrix2[runner]);
         }
     }
 
+    return answer;
+}
+
+template <typename T>
+MtmMat<T> operator+(const MtmMat<T> matrix1, const MtmMat<T> matrix2){
+    const size_t numRows = matrix1.dimensions.getRows();
+    const size_t numCols = matrix1.dimensions.getCols();
+    if (matrix2.dimensions.getRows() != numRows
+        || matrix2.dimensions.getCols() != numCols){
+
+        throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
+                matrix2.dimensions);
+    }
+
+    MtmMat<T> answer(Dimensions(numRows, numCols), 0);
+    for (int row=0; row<numRows; ++row){
+        answer[row] = matrix1[row] + matrix2[row]; //vector addition
+    }
     return answer;
 }
 
