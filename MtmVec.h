@@ -22,6 +22,8 @@ namespace MtmMath {
         //Scalar multiplication (returns new vector)
         MtmVec<T> operator*(const T& scalar);
 
+        //Roi : don't forget to implement unary operator (they said we need this)
+        MtmVec<T> operator-();
 
         /*
          * Function that get function object f and uses it's () operator on each element in the vectors.
@@ -34,12 +36,12 @@ namespace MtmMath {
          * Resizes a vector to dimension dim, new elements gets the value val.
          * Notice vector cannot transpose through this method.
          */
-        void resize(Dimensions dim, const T& val=T());
+        virtual void resize(Dimensions dim, const T& val=T());
 
         /*
          * Performs transpose operation on matrix
          */
-        void transpose();
+        virtual void transpose();
 
         //Roi
         virtual T& operator[](int index);
