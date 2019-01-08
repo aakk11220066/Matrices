@@ -40,14 +40,14 @@ namespace MtmMath {
         //override: prohibit resizing to non-square
         void resize(Dimensions newDim, const T& val=T()) override {
             if (newDim.getRow() != newDim.getCol()){
-                throw MtmExceptions::ChangeMatFail(dimensions, newDim);
+                throw MtmExceptions::ChangeMatFail(this->dimensions, newDim);
             }
             MtmMat<T>::resize(newDim, val);
         }
 
             //override: prohibit calling reshape on MtmMatSq
         void reshape(Dimensions newDim) override {
-            throw MtmExceptions::ChangeMatFail(dimensions, newDim);
+            throw MtmExceptions::ChangeMatFail(this->dimensions, newDim);
         }
     };
 
