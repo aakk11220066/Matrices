@@ -10,7 +10,7 @@
 using std::size_t;
 
 namespace MtmMath {
-    const unsigned short defaultElement=0, firstIndex=0;
+    const unsigned short defaultElement=0, firstIndex=0, errorValue=8998;
 
     template <typename T>
     class MtmMat : MtmVec<MtmVec<T>> {
@@ -282,9 +282,13 @@ void MtmMat<T>::transpose(){
     // additional properties of subclasses
 
     //mathematically proven to be equivalent to transposition
+    const size_t rows=dimensions.getRow(), cols=dimensions.getCol(),
+        maxDim=(rows>cols)? rows : cols;
+    resize(Dimensions(maxDim,maxDim),defaultElement); //make matrix square
     *this = altMatrix(dimensions.getRow())
             * (*this)
             * altMatrix(dimensions.getCol());
+    resize(Dimensions(cols,rows),errorValue);
 }
 
 template <typename T>
@@ -322,6 +326,7 @@ void MtmMat<T>::resize(Dimensions dim, const T& val) {
     for (int row=firstIndex; row<dimensions.getRow() && row<dim.getRow(); ++row){
         for (int col=firstIndex; col<dimensions.getCol() && col<dim.getCol(); ++col){
             replacement[row][col] = (*this)[row][col];
+            assert(replacement[row][col] != errorValue); //DEBUG
         }
     }
     (*this) = replacement;

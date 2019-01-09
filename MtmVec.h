@@ -7,9 +7,10 @@
 #include "complex.h"
 
 using std::size_t;
+#define firstIndex 0 //DEBUG
+#define defaultElement 0 //DEBUG
 
 namespace MtmMath {
-    const short firstIndex=0, defaultElement=0;
 
     template <typename T>
     class MtmVec {
@@ -196,5 +197,7 @@ MtmVec<T> MtmVec<T>::operator*(const T& scalar) const {
     return answer;
 }
 
+#undef firstIndex //DEBUG
+#undef defaultElement //DEBUG
 
 #endif //EX3_MTMVEC_H
