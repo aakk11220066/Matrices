@@ -14,6 +14,8 @@ namespace MtmMath {
             return "(" + std::to_string(row) + "," + std::to_string(col) + ")";
         }
 
+        Dimensions& operator=(const Dimensions&) = default;
+
         bool operator==(Dimensions dim2) const {
             return (row==dim2.row) and (col==dim2.col);
         }

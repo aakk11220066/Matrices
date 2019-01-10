@@ -2,8 +2,8 @@
 
 #include "MtmVec.h"
 #include "MtmMat.h"
-#include "MtmMatSq.h"
-#include "MtmMatTriag.h"
+//#include "MtmMatSq.h"
+//#include "MtmMatTriag.h"
 #include "complex.h"
 
 #include <assert.h>
@@ -45,21 +45,21 @@ void exceptionsTest() {
     catch (MtmExceptions::ChangeMatFail& e){
         cout<< e.what() <<endl;
     }
-    try {
+    /*try {
         MtmMat<int> m1(Dimensions(3,3),5);
         m1[4][3]=5;
         assert(false);
     }
     catch (MtmExceptions::AccessIllegalElement& e){
         cout<< e.what() <<endl;
-    }
+    }*/
 }
 
 void constructors() {
     MtmVec<int> v1(5,3);
     MtmMat<int> m1(Dimensions(3,3),0);
-    MtmMatSq<int> m2(3,1);
-    MtmMatTriag<int> m3(3,1,true);
+    //MtmMatSq<int> m2(3,1);
+    //MtmMatTriag<int> m3(3,1,true);
 }
 
 void dataTypes() {
@@ -83,17 +83,17 @@ void FuncExample() {
 
     MtmVec<int> v(5,0);
     v[1]=3;v[2]=-7;v[3]=-1;v[4]=2;
-    MtmMat<int> m(Dimensions(2,3),0);
+    /*MtmMat<int> m(Dimensions(2,3),0);
     m[0][1]=1;m[1][0]=2;
     m[0][1]=3;m[1][1]=2;
     m[0][2]=5;m[1][2]=-6;
     maxAbsolute f;
     assert (v.vecFunc(f)==7);
     MtmVec<int> res(m.matFunc(f));
-    assert(res[0]==2 and res[1]==3 and res[2]==6);
+    assert(res[0]==2 and res[1]==3 and res[2]==6);*/
 }
 
-void iterators() {
+/*void iterators() {
     MtmMatSq<int> m(2,0);
     m[1][0]=1;m[1][1]=2;
 
@@ -112,15 +112,19 @@ void iterators() {
         ++i;
     }
 
-}
+}*/
 
 
 
 int main() {
     exceptionsTest();
+    std::cout << "Exceptions test complete." << endl; //DEBUG
     constructors();
+    std::cout << "Constructors test complete." << endl; //DEBUG
     dataTypes();
+    std::cout << "dataTypes test complete." << endl; //DEBUG
     FuncExample();
-    iterators();
+    std::cout << "FuncExample test complete." << endl; //DEBUG
+    //iterators();
 }
 

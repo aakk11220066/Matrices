@@ -23,19 +23,23 @@ namespace MtmMath {
         /*
          * Vector constructor, m is the number of elements in it and val is the initial value for the matrix elements
          */
-        explicit MtmVec(size_t m, const T& val=T());
+        explicit MtmVec(size_t m=1, const T& val=T());
 
         //destructor
         virtual ~MtmVec();
 
         //copy constructor
-        MtmVec<T>(const MtmVec<T>& original){
-            MtmVec<T> answer(original.size, defaultElement);
-            answer.is_column = original.is_column;
-            for (int i=firstIndex; i<original.size; ++i){
-                answer[i] = original[i];
+        MtmVec<T>(const MtmVec<T>& original) : size(original.size){
+            try {
+                data = new T[size];
+            } catch (std::bad_alloc) {
+                throw MtmExceptions::OutOfMemory();
             }
-            return answer;
+
+            is_column = original.is_column;
+            for (int i=firstIndex; i<original.size; ++i){
+                (*this)[i] = original[i];
+            }
         }
 
         //assignment operator
@@ -43,11 +47,16 @@ namespace MtmMath {
             if (this == &original) return *this;
             delete[] data;
             size=original.size;
-            data = new T[size];
+            try {
+                data = new T[size];
+            } catch(std::bad_alloc) {
+                throw MtmExceptions::OutOfMemory();
+            }
             is_column = original.is_column;
             for (int i=firstIndex; i<original.size; ++i){
                 (*this)[i] = original[i];
             }
+            return *this;
         }
 
         //Scalar multiplication (returns new vector)
@@ -100,9 +109,15 @@ namespace MtmMath {
                 }
                 throw MtmExceptions::ChangeMatFail(Dimensions(cols, rows), dim);
             }
+
             int newSize = (dim.getRow()>dim.getCol())?
                     dim.getRow() : dim.getCol();
-            T* newData = new T[newSize];
+            T* newData = NULL;
+            try {
+                newData = new T[newSize];
+            } catch (std::bad_alloc){
+                throw MtmExceptions::OutOfMemory();
+            }
             for (int i=0; i<newSize && i<size; ++i){
                 newData = data;
             }
@@ -117,15 +132,18 @@ namespace MtmMath {
             is_column = !is_column;
         }
 
-        virtual T& operator[](int index){
-            if (index<0 || index>size) {
+        virtual T& operator[](int index){ //code duplicated in const version!
+            if (index<0 || index>=size) {
                 throw MtmExceptions::AccessIllegalElement();
             }
             return data[index];
         }
 
-        virtual const T& operator[](int index) const{
-            return (*this)[index];
+        virtual const T& operator[](int index) const{//code duplicated!
+            if (index<0 || index>=size) {
+                throw MtmExceptions::AccessIllegalElement();
+            }
+            return data[index];
         }
     };
 
@@ -172,6 +190,7 @@ MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
 
 template <typename T>
 MtmVec<T>::MtmVec(size_t m, const T& val) : size(m) {
+    if (m <= 0) throw MtmExceptions::IllegalInitialization();
     try {
         data = new T[m];
     } catch (std::bad_alloc) {
