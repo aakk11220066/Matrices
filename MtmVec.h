@@ -1,3 +1,4 @@
+
 #ifndef EX3_MTMVEC_H
 #define EX3_MTMVEC_H
 
@@ -14,10 +15,13 @@ namespace MtmMath {
 
     template <typename T>
     class MtmVec {
+        const long long int DISABLED = -1;
+        const long long int ENABLED = 0;
     private:
         T* data;
     protected:
         bool is_column = true;
+        long long int* locked;
         size_t size;
     public:
         /*
@@ -32,21 +36,32 @@ namespace MtmMath {
         MtmVec<T>(const MtmVec<T>& original){
             MtmVec<T> answer(original.size, defaultElement);
             answer.is_column = original.is_column;
-            for (int i=firstIndex; i<original.size; ++i){
+            for (int i=firstIndex; i<original.size; ++i) {
                 answer[i] = original[i];
             }
-            return answer;
         }
 
         //assignment operator
         MtmVec<T>& operator=(const MtmVec<T> original){
             if (this == &original) return *this;
             delete[] data;
+            delete[] locked;
             size=original.size;
             data = new T[size];
+            locked = new long long int[size];
             is_column = original.is_column;
             for (int i=firstIndex; i<original.size; ++i){
                 (*this)[i] = original[i];
+                locked[i] = original.locked[i];
+            }
+        }
+
+        //Mat Locker
+        virtual MtmVec<T>& mat_locker(int begin_index, int end_index){
+            for (int i =firstIndex; i< size; i++){
+                if ((i >= begin_index)&&(i<=end_index)){
+                    locked[i] = ENABLED;
+                }
             }
         }
 
@@ -101,7 +116,7 @@ namespace MtmMath {
                 throw MtmExceptions::ChangeMatFail(Dimensions(cols, rows), dim);
             }
             int newSize = (dim.getRow()>dim.getCol())?
-                    dim.getRow() : dim.getCol();
+                          dim.getRow() : dim.getCol();
             T* newData = new T[newSize];
             for (int i=0; i<newSize && i<size; ++i){
                 newData = data;
@@ -148,14 +163,14 @@ using namespace MtmMath;
 template <typename T>
 MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
     if (size!=other.size || is_column!=other.is_column){
-        int cols=1, rows=1;
+        size_t cols=1, rows=1;
         if (is_column) {
             rows=size;
         }
         else{
             cols = size;
         }
-        int otherRows=1, otherCols=1;
+        size_t otherRows=1, otherCols=1;
         if (other.is_column){
             otherRows = other.size;
         }
@@ -163,22 +178,25 @@ MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
             otherCols = other.size;
         }
         throw MtmExceptions::DimensionMismatch(Dimensions(rows, cols),
-                                               Dimensions(otherRows, otherCols));
+                                               Dimensions(otherRows,
+                                                       otherCols));
     }
     MtmVec<T> answer(size,defaultElement);
     for (int i=firstIndex; i<size; ++i) answer[i] = (*this)[i]+other[i];
     return answer;
 }
-
+//added error in case of illegal size.
 template <typename T>
 MtmVec<T>::MtmVec(size_t m, const T& val) : size(m) {
     try {
+        if (m < 0) throw MtmExceptions::IllegalInitialization();
+        locked = new long long int[m];
         data = new T[m];
     } catch (std::bad_alloc) {
         throw MtmExceptions::OutOfMemory();
     }
-
     for (int i=firstIndex; i<size; i++){
+        locked[i] = DISABLED;
         data[i] = val;
     }
 }
