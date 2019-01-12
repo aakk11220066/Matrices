@@ -1,123 +1,225 @@
-#ifndef EX3_MTMMATTRIAG_H
-#define EX3_MTMMATTRIAG_H
 
+#ifndef EX3_MTMVEC_H
+#define EX3_MTMVEC_H
+
+
+#ifndef EX3_MTMVEC_H
+#define EX3_MTMVEC_H
 
 #include <vector>
 #include "MtmExceptions.h"
 #include "Auxilaries.h"
-#include "MtmMatSq.h"
+#include "complex.h"
 
 using std::size_t;
+#define firstIndex 0 //DEBUG
+#define defaultElement 0 //DEBUG
 
 namespace MtmMath {
-    enum TriangleType{NEITHER, UPPER, LOWER};
 
     template <typename T>
-    class MtmMatTriag : public MtmMatSq<T> {
-        /* checks if given MtmMatSq is also upper/lower triangular or neither.
-         * By default selects upper
-         */
-        TriangleType isUpperOrLower(const MtmMatSq<T>& mat) const;
-
-        //takes square matrix and zeroes out top/bottom triangle
-        void triangulate(MtmMatSq<T> target, bool makeUpper);
-
-        bool upper = true;
-
+    class MtmVec {
+        const long long int DISABLED = -1;
+        const long long int ENABLED = 0;
+    private:
+        T* data;
+    protected:
+        bool is_column = true;
+        long long int* locked;
+        size_t size;
     public:
-
         /*
-         * Triangular Matrix constructor, m is the number of rows and columns in the matrix,
-         * val is the initial value for the matrix elements and isUpper_ is whether it is upper
-         * Rectangular matrix (true means it is)
+         * Vector constructor, m is the number of elements in it and val is the initial value for the matrix elements
          */
-        MtmMatTriag<T> (size_t m, const T& val=T(), bool isUpper_t=true);
-
-        //copy constructor
-        MtmMatTriag<T> (const MtmMatTriag& original) = default;
-
-        //constructor for normal/square matrices to triangular
-        MtmMatTriag<T> (const MtmMatSq<T>& original);
+        explicit MtmVec(size_t m, const T& val=T());
 
         //destructor
-        virtual ~MtmMatTriag<T> () = default;
+        virtual ~MtmVec();
 
-        //operator=
-        virtual MtmMatTriag<T>& operator=(const MtmMatTriag&) = default;
-
-        //override: ensure user does not change bottom/top triangle illegally
-        T& operator[](int index) override {
-            //TODO: ensure user does not change bottom/top triangle illegally
-            return MtmVec<T>::operator[](index);
-        };
-
-        //override: note that triangle is now opposite kind of triangle
-        void transpose() override {
-            upper = !upper;
-            MtmMatSq<T>::transpose();
+        //copy constructor
+        MtmVec<T>(const MtmVec<T>& original){
+            MtmVec<T> answer(original.size, defaultElement);
+            answer.is_column = original.is_column;
+            for (int i=firstIndex; i<original.size; ++i) {
+                answer[i] = original[i];
+            }
         }
 
-        //override: triangulate after resizing
-        void resize(Dimensions dim, const T& val=T()) override {
-            MtmMatSq<T>::resize(dim, val);
-            triangulate(*this, upper);
+        //assignment operator
+        MtmVec<T>& operator=(const MtmVec<T> original){
+            if (this == &original) return *this;
+            delete[] data;
+            delete[] locked;
+            size=original.size;
+            data = new T[size];
+            locked = new long long int[size];
+            is_column = original.is_column;
+            for (int i=firstIndex; i<original.size; ++i){
+                (*this)[i] = original[i];
+                locked[i] = original.locked[i];
+            }
         }
 
+        //Mat Locker
+        virtual MtmVec<T>& lockVector(int begin_index, int end_index){
+            for (int i =firstIndex; i< size; i++){
+                if ((i >= begin_index)&&(i<=end_index)){
+                    locked[i] = ENABLED;
+                }
+            }
+        }
+
+        //Scalar multiplication (returns new vector)
+        virtual MtmVec<T> operator*(const T& scalar) const;
+
+        //Scalar addition
+        virtual MtmVec<T> operator+(const T& scalar) const {
+            MtmVec<T> answer(size, defaultElement);
+            for (int i=firstIndex; i<size; ++i){
+                answer = (*this) + scalar;
+            }
+            return answer;
+        }
+
+        //Vector addition
+        virtual MtmVec<T> operator+(const MtmVec<T> other) const;
+
+        //negation
+        MtmVec<T> operator-(){
+            return (-1)*(*this);
+        }
+
+        /*
+         * Function that get function object f and uses it's () operator on each element in the vectors.
+         * It outputs the function object's * operator after iterating on all the vector's elements
+         */
+        template <typename Func>
+        T vecFunc(Func& f) const{
+            for (int i=firstIndex; i<size; i++){
+                f((*this)[i]);
+            }
+            return *f;
+        }
+
+        /*
+         * Resizes a vector to dimension dim, new elements gets the value val.
+         * Notice vector cannot transpose through this method.
+         */
+        virtual void resize(Dimensions dim, const T& val=T()){
+            int cols=1, rows=1;
+            if ((is_column && dim.getRow()!=1)
+                || (!is_column && dim.getCol()!=1)
+                || dim.getCol() <= 0
+                || dim.getRow() <= 0){
+                if (is_column){
+                    rows = size;
+                }
+                else{
+                    cols = size;
+                }
+                throw MtmExceptions::ChangeMatFail(Dimensions(cols, rows), dim);
+            }
+            int newSize = (dim.getRow()>dim.getCol())?
+                          dim.getRow() : dim.getCol();
+            T* newData = new T[newSize];
+            for (int i=0; i<newSize && i<size; ++i){
+                newData = data;
+            }
+            delete[] data;
+            data = newData;
+        }
+
+        /*
+         * Performs transpose operation on matrix
+         */
+        virtual void transpose(){
+            is_column = !is_column;
+        }
+
+        virtual T& operator[](int index){
+            if (index<0 || index>size) {
+                throw MtmExceptions::AccessIllegalElement();
+            }
+            return data[index];
+        }
+
+        virtual const T& operator[](int index) const{
+            return (*this)[index];
+        }
     };
 
+    //complementary symmetry (necessary because class is generic, so no
+    // promotion)
+    template <typename T>
+    MtmVec<T> operator*(const T& scalar, const MtmVec<T> vector){
+        return vector*scalar;
+    }
+
+    template <typename T>
+    MtmVec<T> operator+(const T& scalar, const MtmVec<T> vector){
+        return vector+scalar;
+    }
 }
 
-//implementation begins here
+//implementations begin here
 using namespace MtmMath;
 
 template <typename T>
-MtmMatTriag<T>::MtmMatTriag(size_t m, const T& val, bool isUpper_t) :
-        MtmMatSq<T>(m, val){
-
-    triangulate (*this, isUpper_t);
-    upper = isUpper_t;
+MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
+    if (size!=other.size || is_column!=other.is_column){
+        size_t cols=1, rows=1;
+        if (is_column) {
+            rows=size;
+        }
+        else{
+            cols = size;
+        }
+        size_t otherRows=1, otherCols=1;
+        if (other.is_column){
+            otherRows = other.size;
+        }
+        else{
+            otherCols = other.size;
+        }
+        throw MtmExceptions::DimensionMismatch(Dimensions(rows, cols),
+                                               Dimensions(otherRows,
+                                                       otherCols));
+    }
+    MtmVec<T> answer(size,defaultElement);
+    for (int i=firstIndex; i<size; ++i) answer[i] = (*this)[i]+other[i];
+    return answer;
+}
+//added error in case of illegal size.
+template <typename T>
+MtmVec<T>::MtmVec(size_t m, const T& val) : size(m) {
+    try {
+        if (m < 0) throw MtmExceptions::IllegalInitialization();
+        locked = new long long int[m];
+        data = new T[m];
+    } catch (std::bad_alloc) {
+        throw MtmExceptions::OutOfMemory();
+    }
+    for (int i=firstIndex; i<size; i++){
+        locked[i] = DISABLED;
+        data[i] = val;
+    }
 }
 
 template <typename T>
-MtmMatTriag<T>::MtmMatTriag (const MtmMatSq<T>& original) :
-        MtmMatSq<T>(original) {
-
-    TriangleType triangleType = isUpperOrLower(original);
-    if (triangleType == NEITHER) throw 
-    MtmExceptions::IllegalInitialization();
-    upper = (triangleType==UPPER);
+MtmVec<T>::~MtmVec(){
+    delete[] data;
 }
 
-template<typename T>
-TriangleType MtmMatTriag<T>::isUpperOrLower(const MtmMatSq<T> &mat) const {
-    size_t m = mat.dimensions.getRow();
-    bool isUpper = true, isLower = true;
-    for (int row = 0; row < m; ++row) {
-        for (int col = 0; col < m; ++col) {
-            //found nonzero beneath (next line: above) diagonal
-            if (row>col && mat[row][col]!=0) isUpper = false;
-            if (row<col && mat[row][col]!=0) isLower = false;
-        }
+template <typename T>
+MtmVec<T> MtmVec<T>::operator*(const T& scalar) const {
+    MtmVec<T> answer(*this);
+    for (int i=firstIndex; i<size; ++i){
+        answer[i] *= scalar;
     }
-    TriangleType pre_answer = (isLower)? LOWER : NEITHER;
-    return (isUpper)? UPPER : pre_answer;
+    return answer;
 }
 
-//added locking to triangulate
-template<typename T>
-void MtmMatTriag<T>::triangulate(MtmMatSq <T> target, bool makeUpper) {
-    size_t m = target.dimensions.getRow();
-    for (int row = 0; row < m; ++row) {
-        for (int col = 0; col < m; ++col) {
-            if (row>col && makeUpper) {
-                target[row][col] = 0;
-                MtmVec<T>::mat_locker(0, row);
-            }
-            if (row<col && !makeUpper) {
-                target[row][col] = 0;
-                MtmVec<T>::mat_locker(row, (int)m-1);
-            }
-        }
-    }
-}
-#endif //EX3_MTMMATTRIAG_H
+#undef firstIndex //DEBUG
+#undef defaultElement //DEBUG
+
+#endif //EX3_MTMVEC_H
