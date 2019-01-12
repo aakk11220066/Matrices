@@ -72,7 +72,7 @@ using namespace MtmMath;
 
 template <typename T>
 MtmMatTriag<T>::MtmMatTriag(size_t m, const T& val, bool isUpper_t) :
-    MtmMatSq<T>(m, val){
+        MtmMatSq<T>(m, val){
 
     triangulate (*this, isUpper_t);
     upper = isUpper_t;
@@ -80,10 +80,11 @@ MtmMatTriag<T>::MtmMatTriag(size_t m, const T& val, bool isUpper_t) :
 
 template <typename T>
 MtmMatTriag<T>::MtmMatTriag (const MtmMatSq<T>& original) :
-    MtmMatSq<T>(original) {
+        MtmMatSq<T>(original) {
 
     TriangleType triangleType = isUpperOrLower(original);
-    if (triangleType = NEITHER) throw MtmExceptions::IllegalInitialization();
+    if (triangleType == NEITHER) throw
+    MtmExceptions::IllegalInitialization();
     upper = (triangleType==UPPER);
 }
 
@@ -107,11 +108,15 @@ void MtmMatTriag<T>::triangulate(MtmMatSq <T> target, bool makeUpper) {
     size_t m = target.dimensions.getRow();
     for (int row = 0; row < m; ++row) {
         for (int col = 0; col < m; ++col) {
-            if ((row>col && makeUpper) || (row<col && !makeUpper)) {
+            if (row>col && makeUpper) {
                 target[row][col] = 0;
+                MtmVec<T>::lockVector(0, row);
+            }
+            if (row<col && !makeUpper) {
+                target[row][col] = 0;
+                MtmVec<T>::lockVector(row, (int)m-1);
             }
         }
     }
 }
-
 #endif //EX3_MTMMATTRIAG_H
