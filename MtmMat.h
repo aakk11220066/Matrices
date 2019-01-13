@@ -118,7 +118,7 @@ namespace MtmMath {
             template<T>
             friend iterator end();
 
-            explicit iterator(MtmMat *self, unsigned int startIndex) :
+            explicit iterator(MtmMat *self, size_t startIndex) :
                     self(self), linearIndex(startIndex) {}
 
         public:
