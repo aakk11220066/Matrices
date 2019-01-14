@@ -15,10 +15,10 @@ namespace MtmMath {
     template<typename T>
     class MtmVec {
     public:
-        T *data;
+        T *data; //FIXME
         bool locked=false;
         size_t lockStartIndex = 0;
-        size_t lockEndIndex = size-1;
+        size_t lockEndIndex = size-1; //FIXME
     protected:
         bool is_column = true;
         size_t size;
@@ -69,7 +69,7 @@ namespace MtmMath {
         virtual MtmVec<T> operator+(const T &scalar) const {
             MtmVec<T> answer(size, defaultElement);
             for (int i = firstIndex; i < size; ++i) {
-                answer = (*this) + scalar;
+                answer[i] = (*this)[i] + scalar;
             }
             return answer;
         }
