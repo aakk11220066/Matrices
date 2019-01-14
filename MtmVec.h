@@ -209,8 +209,8 @@ namespace MtmMath {
         //DEBUG
         std::ostream& operator<<(std::ostream& outstream){
             std::string outstr("[");
-            for (const T& elem : *this) outstr+=to_string(elem);
-            return outstream << outstr;
+            for (const T& elem : *this) outstr+=to_string(elem)+=", ";
+            return outstream << (outstr+=std::string("]"));
         }
     };
 

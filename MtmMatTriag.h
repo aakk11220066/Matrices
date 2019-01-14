@@ -22,6 +22,7 @@ namespace MtmMath {
         TriangleType isUpperOrLower(const MtmMatSq<T> &mat) const;
 
         //takes square matrix and zeroes out top/bottom triangle
+        //also handles locking
         void triangulate(MtmMatSq<T> target, bool makeUpper);
 
         bool upper = true;
@@ -47,12 +48,6 @@ namespace MtmMath {
         //operator=
         virtual MtmMatTriag<T> &operator=(const MtmMatTriag &) = default;
 
-        //override: ensure user does not change bottom/top triangle illegally
-        T &operator[](int index) override {
-            //TODO: ensure user does not change bottom/top triangle illegally
-            return MtmVec<T>::operator[](index);
-        };
-
         //override: note that triangle is now opposite kind of triangle
         void transpose() override {
             upper = !upper;
@@ -65,6 +60,9 @@ namespace MtmMath {
             triangulate(*this, upper);
         }
 
+        //TODO: override operator+(MtmMatTriag, MtmMatTriag)
+
+        //TODO: override matFunc(Func &f) const
     };
 
     //implementation begins here
@@ -85,6 +83,8 @@ namespace MtmMath {
         TriangleType triangleType = isUpperOrLower(original);
         if (triangleType == NEITHER) throw MtmExceptions::IllegalInitialization();
         upper = (triangleType == UPPER);
+
+        triangulate(*this, upper);
     }
 
     template<typename T>
@@ -104,15 +104,22 @@ namespace MtmMath {
 
     template<typename T>
     void MtmMatTriag<T>::triangulate(MtmMatSq<T> target, bool makeUpper) {
-        size_t m = target.dimensions.getRow();
-        for (int row = 0; row < m; ++row) {
-            target[row].setLock(false); //unlock row
+        const size_t m = target.dimensions.getRow();
+        for (size_t row = 0; row < m; ++row) {
+            target[row].lockVector(false); //unlock row
             for (int col = 0; col < m; ++col) {
                 if ((row > col && makeUpper) || (row < col && !makeUpper)) {
                     target[row][col] = 0;
                 }
             }
-            target[row].setLock(true); //lock row
+            //lock
+            if (makeUpper) {
+                target[row].setLockStartIndex(row);
+            }
+            else {
+                target[row].setLockEndIndex(m - row);
+            }
+            target[row].lockVector(true); //lock row
         }
     }
 }

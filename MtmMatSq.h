@@ -45,7 +45,7 @@ namespace MtmMath {
             MtmMat<T>::resize(newDim, val);
         }
 
-            //override: prohibit calling reshape on MtmMatSq
+        //override: prohibit calling reshape on MtmMatSq
         void reshape(Dimensions newDim) override {
             throw MtmExceptions::ChangeMatFail(this->dimensions, newDim);
         }

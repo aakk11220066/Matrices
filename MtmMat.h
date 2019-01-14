@@ -11,7 +11,7 @@
 using std::size_t;
 
 namespace MtmMath {
-    const unsigned short defaultElement = 0, firstIndex = 0, errorValue = 8998;
+    const size_t defaultElement = 0, firstIndex = 0, errorValue = 8998;
 
     template<typename T>
     class MtmMat : public MtmVec<MtmVec<T>> {
@@ -20,19 +20,19 @@ namespace MtmMath {
     private:
         //generates a square matrix full of zeroes except for the secondary
         //  diagonal, which has 1s
-        MtmMat<T> altMatrix(size_t dimension) const;
+        MtmMat<T> exchangeMatrix(size_t dimension) const;
 
-        T &linearIndexToReference(unsigned int linearIndex) {
-            const unsigned int numRows = (unsigned int) dimensions.getRow();
-            const unsigned int row = linearIndex % numRows, col = linearIndex / numRows;
+        T &linearIndexToReference(size_t linearIndex) {
+            const size_t numRows = dimensions.getRow();
+            const size_t row = linearIndex % numRows, col = linearIndex / numRows;
             if (row >= numRows || col >= dimensions.getCol()) {
                 throw MtmExceptions::AccessIllegalElement();
             }
             return (*this)[row][col];
         }
 
-        unsigned int coordinatesToLinearIndex(size_t row, size_t col) {
-            return (unsigned int) dimensions.getRow() * col + row;
+        size_t coordinatesToLinearIndex(size_t row, size_t col) {
+            return (size_t) dimensions.getRow() * col + row;
         }
 
         MtmVec<T> getColAsVector(size_t col);
@@ -42,7 +42,7 @@ namespace MtmMath {
          * Matrix constructor, dim_t is the dimension of the matrix and val is
          * the initial value for the matrix elements
          */
-        explicit MtmMat<T>(Dimensions dim_t, const T &val = T()); //implemented
+        explicit MtmMat<T>(Dimensions dim_t, const T &val = T());
 
         //copy constructor
         MtmMat<T>(const MtmMat<T> &original) = default;
@@ -110,7 +110,7 @@ namespace MtmMath {
         protected:
             MtmMat *self;
         private:
-            unsigned int linearIndex;
+            size_t linearIndex;
 
             template<T>
             friend iterator begin();
@@ -162,7 +162,7 @@ namespace MtmMath {
             template<T>
             friend nonzero_iterator nzend();
 
-            explicit nonzero_iterator(MtmMat *self, unsigned int startIndex) :
+            explicit nonzero_iterator(MtmMat *self, size_t startIndex) :
                     iterator(self, startIndex) {
                 if (this->operator*() == 0) ++(*this);
             }
@@ -219,6 +219,9 @@ namespace MtmMath {
     template<typename T>
     MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
         MtmVec<MtmVec<T>>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
+
+
+        //TODO: initialize rows to be of column size
         //make sub-vectors horizontal
         for (int row = firstIndex; row < dim_t.getRow(); ++row) {
             (*this)[row].transpose(); //MtmVec transpose
@@ -289,7 +292,7 @@ namespace MtmMath {
     }
 
     template<typename T>
-    MtmMat<T> MtmMat<T>::altMatrix(size_t dimension) const {
+    MtmMat<T> MtmMat<T>::exchangeMatrix(size_t dimension) const {
         MtmMat<T> answer(Dimensions(dimension, dimension), defaultElement);
         for (int i = firstIndex; i < dimension; i++) {
             answer[dimension - i - 1][i] = 1;
@@ -306,9 +309,9 @@ namespace MtmMath {
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol(),
                 maxDim = (rows > cols) ? rows : cols;
         resize(Dimensions(maxDim, maxDim), defaultElement); //make matrix square
-        *this = altMatrix(dimensions.getRow())
+        *this = exchangeMatrix(dimensions.getRow())
                 * (*this)
-                * altMatrix(dimensions.getCol());
+                * exchangeMatrix(dimensions.getCol());
         resize(Dimensions(cols, rows), errorValue);
     }
 
@@ -318,7 +321,7 @@ namespace MtmMath {
         // additional properties of subclasses
 
         const size_t numRows = newDim.getRow(), numCols = newDim.getCol();
-        const unsigned int maxIndex =
+        const size_t maxIndex =
                 MtmMat<T>::coordinatesToLinearIndex(numRows - 1, numCols - 1);
         //sanitize inputs
         if ((newDim.getRow() <= firstIndex || newDim.getCol() <= firstIndex)
@@ -328,7 +331,7 @@ namespace MtmMath {
         }
 
         MtmMat<T> replacement(newDim, defaultElement);
-        for (unsigned int index = firstIndex; index < maxIndex; ++index) {
+        for (size_t index = firstIndex; index < maxIndex; ++index) {
             replacement.linearIndexToReference(index) = linearIndexToReference(index);
         }
 
