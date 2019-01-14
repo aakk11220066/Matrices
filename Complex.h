@@ -1,6 +1,8 @@
 #ifndef EX3_COMPLEX_H
 #define EX3_COMPLEX_H
 
+//DEBUG
+#include <string>
 
 namespace MtmMath {
     class Complex {
@@ -26,6 +28,11 @@ namespace MtmMath {
         bool operator==(const Complex &c) const;
 
     };
+
+    //DEBUG
+    string to_string(Complex& num){
+        return std::to_string(re)+=string("+")+=std::to_string(im)+=string("i");
+    }
 
     MtmMath::Complex operator+(const Complex &a, const Complex &b);
 

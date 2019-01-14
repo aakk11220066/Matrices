@@ -6,6 +6,10 @@
 #include "Auxilaries.h"
 #include "complex.h"
 
+//DEBUG
+#include <iostream>
+#include <string>
+
 using std::size_t;
 #define firstIndex 0 //DEBUG
 #define defaultElement 0 //DEBUG
@@ -43,6 +47,10 @@ namespace MtmMath {
             for (int i = firstIndex; i < original.size; ++i) {
                 (*this)[i] = original[i];
             }
+
+            locked = original.locked;
+            lockStartIndex = original.lockStartIndex;
+            lockEndIndex = original.lockEndIndex;
         }
 
         //assignment operator
@@ -196,6 +204,13 @@ namespace MtmMath {
 
         iterator end(){
             return iterator(this, size);
+        }
+
+        //DEBUG
+        std::ostream& operator<<(std::ostream& outstream){
+            std::string outstr("[");
+            for (const T& elem : *this) outstr+=to_string(elem);
+            return outstream << outstr;
         }
     };
 
