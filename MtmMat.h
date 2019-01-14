@@ -17,6 +17,9 @@ namespace MtmMath {
     class MtmMat : public MtmVec<MtmVec<T>> {
     protected:
         Dimensions dimensions;
+
+        //generates vector copy of some column of matrix
+        const MtmVec<T> getColAsVector(size_t col) const;
     private:
         //generates a square matrix full of zeroes except for the secondary
         //  diagonal, which has 1s
@@ -33,9 +36,6 @@ namespace MtmMath {
         size_t coordinatesToLinearIndex(size_t row, size_t col) {
             return (size_t) dimensions.getRow() * col + row;
         }
-
-        //generates vector copy of some column of matrix
-        MtmVec<T> getColAsVector(size_t col);
 
     public:
         /*
@@ -222,7 +222,7 @@ namespace MtmMath {
     template<typename T>
     MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
         MtmVec<MtmVec<T>>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
-            
+
         //make sub-vectors horizontal
         for (int row = firstIndex; row < dim_t.getRow(); ++row) {
             (*this)[row].transpose(); //MtmVec transpose
@@ -369,10 +369,11 @@ namespace MtmMath {
     }
 
     template<typename T>
-    MtmVec<T> MtmMat<T>::getColAsVector(size_t col) {
+    const MtmVec<T> MtmMat<T>::getColAsVector(size_t col) const {
         MtmVec<T> answer(dimensions.getRow(), defaultElement);
         for (int row = firstIndex; row < dimensions.getRow(); ++row) {
-            answer[row] = (*this)[row][col];
+            const T& cell = (*this)[row][col];
+            answer[row] = cell;
         }
         return answer;
     }

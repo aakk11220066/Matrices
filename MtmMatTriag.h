@@ -62,7 +62,10 @@ namespace MtmMath {
 
         //TODO: override operator+(MtmMatTriag, MtmMatTriag)
 
-        //TODO: override matFunc(Func &f) const
+        //TODO: override iterator and nziterator
+
+        template<typename Func>
+        MtmVec<T> matFunc(Func &f) const override;
     };
 
     //implementation begins here
