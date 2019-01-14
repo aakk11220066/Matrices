@@ -9,8 +9,9 @@
 //DEBUG
 #include <iostream>
 #include <string>
-
-using std::size_t;
+using std::cout;
+using std::endl; //FIXME
+using std::size_t; //FIXME
 #define firstIndex 0 //DEBUG
 #define defaultElement 0 //DEBUG
 
@@ -18,7 +19,7 @@ namespace MtmMath {
 
     template<typename T>
     class MtmVec {
-    public:
+    private:
         T *data; //FIXME
         bool locked=false;
         size_t lockStartIndex = 0;
@@ -70,6 +71,14 @@ namespace MtmMath {
             return *this;
         }
 
+        //print vec DEBUG
+        void print_vec(){
+            for (int i = 0; i< int(size); ++i){
+                cout << (*this)[i] << " ";
+        }
+        cout << endl;
+        }
+
         //Scalar multiplication (returns new vector)
         virtual MtmVec<T> operator*(const T &scalar) const;
 
@@ -107,7 +116,7 @@ namespace MtmMath {
          * Notice vector cannot transpose through this method.
          */
         virtual void resize(Dimensions dim, const T &val = T()) {
-            int cols = 1, rows = 1;
+            size_t cols = 1, rows = 1;
             if ((is_column && dim.getRow() != 1)
                 || (!is_column && dim.getCol() != 1)
                 || dim.getCol() <= 0
@@ -120,7 +129,7 @@ namespace MtmMath {
                 throw MtmExceptions::ChangeMatFail(Dimensions(cols, rows), dim);
             }
 
-            int newSize = (dim.getRow() > dim.getCol()) ?
+            size_t newSize = (dim.getRow() > dim.getCol()) ?
                           dim.getRow() : dim.getCol();
             T *newData = NULL;
             try {
@@ -128,11 +137,16 @@ namespace MtmMath {
             } catch (std::bad_alloc) {
                 throw MtmExceptions::OutOfMemory();
             }
-            for (int i = 0; i < newSize && i < size; ++i) {
-                newData = data;
+            int i;
+            for (i = 0; i < newSize && i < size; ++i) {
+                newData[i] = data[i];
+            }
+            for (; i< newSize; i++){
+                newData[i] = val;
             }
             delete[] data;
             data = newData;
+            size = newSize;
         }
 
         /*
@@ -142,9 +156,9 @@ namespace MtmMath {
             is_column = !is_column;
         }
 
-        virtual T &operator[](int index) {
+        virtual T &operator[](int index) { //code duplicated in const version!
             if (index < 0 || index >= size || (locked &&
-            lockStartIndex>index && lockEndIndex<index)) {
+                                               lockStartIndex>index && lockEndIndex<index)) {
                 throw MtmExceptions::AccessIllegalElement();
             }
             return data[index];
@@ -207,9 +221,9 @@ namespace MtmMath {
         }
 
         //DEBUG
-        friend std::ostream& operator<<(std::ostream& outstream, MtmVec<T>& me){
+        std::ostream& operator<<(std::ostream& outstream){
             std::string outstr("[");
-            for (const T& elem : me) outstr+=to_string(elem)+=", ";
+            for (const T& elem : *this) outstr+=to_string(elem)+=", ";
             return outstream << (outstr+=std::string("]"));
         }
     };
