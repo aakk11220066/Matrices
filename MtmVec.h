@@ -14,10 +14,11 @@ namespace MtmMath {
 
     template<typename T>
     class MtmVec {
-    private:
+    public:
         T *data;
         bool locked=false;
-        size_t lockIndex = 0;
+        size_t lockStartIndex = 0;
+        size_t lockEndIndex = size-1;
     protected:
         bool is_column = true;
         size_t size;
@@ -134,7 +135,8 @@ namespace MtmMath {
         }
 
         virtual T &operator[](int index) { //code duplicated in const version!
-            if (index < 0 || index >= size || (locked && lockIndex>index)) {
+            if (index < 0 || index >= size || (locked &&
+            lockStartIndex>index && lockEndIndex<index)) {
                 throw MtmExceptions::AccessIllegalElement();
             }
             return data[index];
@@ -151,8 +153,12 @@ namespace MtmMath {
             return locked = status;
         }
 
-        int setLockIndex(int index) {
-            return lockIndex = index;
+        int setLockStartIndex(int index) {
+            return lockStartIndex = index;
+        }
+
+        int setLockEndIndex(int index) {
+            return lockEndIndex = index;
         }
 
         class iterator{
@@ -160,7 +166,7 @@ namespace MtmMath {
             MtmVec* self = NULL;
 
             iterator(MtmVec<T>* self, size_t startIndex=0) : self(self),
-                index(startIndex){};
+                                                             index(startIndex){};
 
             template <T>
             friend iterator begin();
@@ -199,13 +205,13 @@ namespace MtmMath {
     template<typename T>
     MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
         if (size != other.size || is_column != other.is_column) {
-            int cols = 1, rows = 1;
+            size_t cols = 1, rows = 1;
             if (is_column) {
                 rows = size;
             } else {
                 cols = size;
             }
-            int otherRows = 1, otherCols = 1;
+            size_t otherRows = 1, otherCols = 1;
             if (other.is_column) {
                 otherRows = other.size;
             } else {
