@@ -142,7 +142,7 @@ namespace MtmMath {
             is_column = !is_column;
         }
 
-        virtual T &operator[](int index) { //code duplicated in const version!
+        virtual T &operator[](int index) {
             if (index < 0 || index >= size || (locked &&
             lockStartIndex>index && lockEndIndex<index)) {
                 throw MtmExceptions::AccessIllegalElement();
@@ -207,9 +207,9 @@ namespace MtmMath {
         }
 
         //DEBUG
-        std::ostream& operator<<(std::ostream& outstream){
+        friend std::ostream& operator<<(std::ostream& outstream, MtmVec<T>& me){
             std::string outstr("[");
-            for (const T& elem : *this) outstr+=to_string(elem)+=", ";
+            for (const T& elem : me) outstr+=to_string(elem)+=", ";
             return outstream << (outstr+=std::string("]"));
         }
     };
