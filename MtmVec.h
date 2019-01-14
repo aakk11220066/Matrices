@@ -36,7 +36,7 @@ namespace MtmMath {
         virtual ~MtmVec();
 
         //copy constructor
-        MtmVec<T>(const MtmVec<T> &original) : size(original.size) { //TODO: add lock mechanism
+        MtmVec<T>(const MtmVec<T> &original) : size(original.size) {
             try {
                 data = new T[size];
             } catch (std::bad_alloc) {
