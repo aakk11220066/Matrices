@@ -31,7 +31,7 @@ namespace MtmMath {
         virtual ~MtmVec();
 
         //copy constructor
-        MtmVec<T>(const MtmVec<T> &original) : size(original.size) {
+        MtmVec<T>(const MtmVec<T> &original) : size(original.size) { //TODO: add lock mechanism
             try {
                 data = new T[size];
             } catch (std::bad_alloc) {
@@ -134,7 +134,7 @@ namespace MtmMath {
         }
 
         virtual T &operator[](int index) { //code duplicated in const version!
-            if (index < 0 || index >= size || locked && (lockIndex>index)) {
+            if (index < 0 || index >= size || (locked && lockIndex>index)) {
                 throw MtmExceptions::AccessIllegalElement();
             }
             return data[index];
