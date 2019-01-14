@@ -20,6 +20,7 @@ namespace MtmMath {
     template<typename T>
     class MtmVec {
     private:
+        MtmVec *self;
         T *data; //FIXME
         bool locked=false;
         size_t lockStartIndex = 0;
@@ -37,7 +38,7 @@ namespace MtmMath {
         virtual ~MtmVec();
 
         //copy constructor
-        MtmVec<T>(const MtmVec<T> &original) : size(original.size) {
+        MtmVec<T>(const MtmVec<T> &original) : size(original.size) { //TODO: add lock mechanism
             try {
                 data = new T[size];
             } catch (std::bad_alloc) {
@@ -205,7 +206,7 @@ namespace MtmMath {
             friend bool operator!=(iterator& iterator1, iterator& iterator2){
                 return !(iterator1==iterator2);
             }
-            iterator& operator++() {
+            virtual iterator& operator++() {
                 if (*this != this->end()) {
                     return (*this)[index];
                 }
@@ -220,13 +221,44 @@ namespace MtmMath {
             return iterator(this, size);
         }
 
-        //DEBUG
-        std::ostream& operator<<(std::ostream& outstream){
-            std::string outstr("[");
-            for (const T& elem : *this) outstr+=to_string(elem)+=", ";
-            return outstream << (outstr+=std::string("]"));
+
+        class nonzero_iterator : iterator {
+        public:
+            nonzero_iterator &operator++() override {
+                if (*this != this->self->end()) iterator::operator++(*this);
+                while (*this != this->self->end() && this->operator*() == 0) {
+                    iterator::operator++(*this);
+                }
+            }
+
+        private:
+            template<T>
+            friend nonzero_iterator nzbegin();
+
+            template<T>
+            friend nonzero_iterator nzend();
+
+            explicit nonzero_iterator(MtmVec *self, size_t startIndex) :
+                    iterator(self, startIndex) {
+                if (this->operator*() == 0) ++(*this);
+            }
+        };
+
+        nonzero_iterator nzbegin() {
+            return nonzero_iterator(this, firstIndex);
+        }
+
+        nonzero_iterator nzend() {
+            return (nonzero_iterator) end();
         }
     };
+
+    //DEBUG
+    friend std::ostream& operator<<(std::ostream& outstream, MtmVec<T>& me){
+        std::string outstr("[");
+        for (const T& elem : me) outstr+=to_string(elem)+=", ";
+        return outstream << (outstr+=std::string("]"));
+    }
 
     //implementations begin here
     using namespace MtmMath;
