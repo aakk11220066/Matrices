@@ -1,6 +1,5 @@
 
-#ifndef EX3_MTMVEC_H
-#define EX3_MTMVEC_H
+
 
 
 #ifndef EX3_MTMVEC_H
@@ -10,6 +9,7 @@
 #include "MtmExceptions.h"
 #include "Auxilaries.h"
 #include "complex.h"
+#include "MtmVec.h"
 
 using std::size_t;
 #define firstIndex 0 //DEBUG
@@ -42,7 +42,9 @@ namespace MtmMath {
             answer.is_column = original.is_column;
             for (int i=firstIndex; i<original.size; ++i) {
                 answer[i] = original[i];
+                answer.locked[i] = original.locked[i];
             }
+            return answer;
         }
 
         //assignment operator
@@ -142,7 +144,7 @@ namespace MtmMath {
             }
             return data[index];
         }
-
+//don't we need to add throw also here??
         virtual const T& operator[](int index) const{
             return (*this)[index];
         }
@@ -167,7 +169,7 @@ using namespace MtmMath;
 template <typename T>
 MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
     if (size!=other.size || is_column!=other.is_column){
-        size_t cols=1, rows=1;
+        int cols=1, rows=1;
         if (is_column) {
             rows=size;
         }
@@ -189,7 +191,7 @@ MtmVec<T> MtmVec<T>::operator+(const MtmVec<T> other) const {
     for (int i=firstIndex; i<size; ++i) answer[i] = (*this)[i]+other[i];
     return answer;
 }
-//added error in case of illegal size.
+//added error in case of illegal size. we need to verify this.
 template <typename T>
 MtmVec<T>::MtmVec(size_t m, const T& val) : size(m) {
     try {
