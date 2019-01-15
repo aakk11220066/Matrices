@@ -51,7 +51,7 @@ namespace MtmMath {
         //override: note that triangle is now opposite kind of triangle
         void transpose() override {
             upper = !upper;
-            MtmMatSq<T>::transpose(*this);
+            MtmMatSq<T>::transpose();
         }
 
         //override: triangulate after resizing
@@ -107,7 +107,7 @@ namespace MtmMath {
     void MtmMatTriag<T>::triangulate(MtmMatSq<T> target, bool makeUpper) {
         const size_t m = target.dimensions.getRow();
         for (size_t row = 0; row < m; ++row) {
-            target[row].lockVector(false); //unlock row
+            target[row].setLock(false); //unlock row
             for (int col = 0; col < m; ++col) {
                 if ((row > col && makeUpper) || (row < col && !makeUpper)) {
                     target[row][col] = 0;
@@ -120,7 +120,7 @@ namespace MtmMath {
             else {
                 target[row].setLockEndIndex(m - row);
             }
-            target[row].lockVector(true); //lock row
+            target[row].setLock(true); //lock row
         }
     }
 }

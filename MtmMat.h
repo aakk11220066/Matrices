@@ -17,9 +17,6 @@ namespace MtmMath {
     template <typename T>
     class MtmMat;
 
-    template <typename T>
-    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmMat<T> &matrix2);
-
     template<typename T>
     class MtmMat : public MtmVec<MtmVec<T>> {
     protected:
@@ -100,6 +97,15 @@ namespace MtmMath {
             return answer;
         }
 
+        //scalar multiplication
+        MtmMat<T> operator*(const T& scalar){
+            MtmMat<T> answer(*this);
+            for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
+                answer[row] = (*this)[row] * scalar;
+            }
+            return answer;
+        }
+
         //Matrix addition
         friend MtmMat<T> operator+(const MtmMat<T> &matrix1,
                 const MtmMat<T> &matrix2){
@@ -114,6 +120,15 @@ namespace MtmMath {
             MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
             for (int row = firstIndex; row < numRows; ++row) {
                 answer[row] = matrix1[row] + matrix2[row]; //vector addition
+            }
+            return answer;
+        }
+
+        //scalar addition
+        MtmMat<T> operator+(const T& scalar){
+            MtmMat<T> answer(*this);
+            for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
+                answer[row] = (*this)[row] + scalar;
             }
             return answer;
         }
@@ -230,6 +245,11 @@ namespace MtmMath {
     template<typename T>
     MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2) {
         return MtmMat<T>(vector2) * matrix1;
+    }
+
+    template <typename T>
+    MtmMat<T> operator*(const T &scalar, const MtmMat<T> &matrix){
+        return matrix*scalar;
     }
 
     //matrix-vector addition (promotion on hold because class is generic)
@@ -374,7 +394,7 @@ namespace MtmMath {
     const MtmVec<T> MtmMat<T>::getColAsVector(size_t col) const {
         MtmVec<T> answer(dimensions.getRow(), defaultElement);
         for (int row = firstIndex; row < dimensions.getRow(); ++row) {
-            const T& cell = (*this)[row][col]; //DEBUG: assuming matFunc needs not make changes to matrix
+            const T& cell = (*this)[row][col];
             answer[row] = cell;
         }
         return answer;

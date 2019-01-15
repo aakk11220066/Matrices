@@ -335,5 +335,4 @@ namespace MtmMath {
 
 #undef firstIndex //DEBUG
 #undef defaultElement //DEBUG
-
 #endif //EX3_MTMVEC_H

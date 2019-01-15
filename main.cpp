@@ -2,8 +2,8 @@
 
 #include "MtmVec.h"
 #include "MtmMat.h"
-//#include "MtmMatSq.h"
-//#include "MtmMatTriag.h"
+#include "MtmMatSq.h"
+#include "MtmMatTriag.h"
 #include "complex.h"
 
 #include <assert.h>
@@ -45,21 +45,21 @@ void exceptionsTest() {
     catch (MtmExceptions::ChangeMatFail& e){
         cout<< e.what() <<endl;
     }
-    /*try {
+    try {
         MtmMat<int> m1(Dimensions(3,3),5);
         m1[4][3]=5;
         assert(false);
     }
     catch (MtmExceptions::AccessIllegalElement& e){
         cout<< e.what() <<endl;
-    }*/
+    }
 }
 
 void constructors() {
     MtmVec<int> v1(5,3);
     MtmMat<int> m1(Dimensions(3,3),0);
-    //MtmMatSq<int> m2(3,1);
-    //MtmMatTriag<int> m3(3,1,true);
+    MtmMatSq<int> m2(3,1);
+    MtmMatTriag<int> m3(3,1,true);
 }
 
 void dataTypes() {
