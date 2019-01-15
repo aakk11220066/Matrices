@@ -251,14 +251,22 @@ namespace MtmMath {
         nonzero_iterator nzend() {
             return (nonzero_iterator) end();
         }
-    };
 
-    //DEBUG
-    friend std::ostream& operator<<(std::ostream& outstream, MtmVec<T>& me){
-        std::string outstr("[");
-        for (const T& elem : me) outstr+=to_string(elem)+=", ";
-        return outstream << (outstr+=std::string("]"));
-    }
+        //DEBUG
+        friend std::ostream& operator<<(std::ostream& outstream, MtmVec<T>& me){
+            std::string outstr("[");
+            for (const T& elem : me) outstr+=to_string(elem)+=", ";
+            return outstream << (outstr+=std::string("]"));
+        }
+
+        bool getIsColumn() const {
+            return is_column;
+        }
+
+        bool getSize() const {
+            return size;
+        }
+    };
 
     //implementations begin here
     using namespace MtmMath;
@@ -295,7 +303,7 @@ namespace MtmMath {
     MtmVec<T> MtmVec<T>::operator*(const T &scalar) const {
         MtmVec<T> answer(*this);
         for (int i = firstIndex; i < size; ++i) {
-            answer[i] *= scalar;
+            answer[i] = answer[i] * scalar;
         }
         return answer;
     }

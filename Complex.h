@@ -27,12 +27,10 @@ namespace MtmMath {
 
         bool operator==(const Complex &c) const;
 
+        std::string to_string(Complex& num){ //DEBUG
+            return std::to_string(re)+=std::string("+")+=std::to_string(im)+=std::string("i");
+        }
     };
-
-    //DEBUG
-    string to_string(Complex& num){
-        return std::to_string(re)+=string("+")+=std::to_string(im)+=string("i");
-    }
 
     MtmMath::Complex operator+(const Complex &a, const Complex &b);
 

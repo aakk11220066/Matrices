@@ -64,8 +64,6 @@ namespace MtmMath {
 
         //TODO: override iterator and nziterator
 
-        template<typename Func>
-        MtmVec<T> matFunc(Func &f) const override;
     };
 
     //implementation begins here

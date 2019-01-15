@@ -13,6 +13,13 @@ using std::size_t;
 namespace MtmMath {
     const size_t defaultElement = 0, firstIndex = 0, errorValue = 8998;
 
+    //forward declarations
+    template <typename T>
+    class MtmMat;
+
+    template <typename T>
+    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmMat<T> &matrix2);
+
     template<typename T>
     class MtmMat : public MtmVec<MtmVec<T>> {
     protected:
@@ -54,7 +61,8 @@ namespace MtmMath {
         virtual MtmMat<T> &operator=(const MtmMat &original){
             if (this == &original) return *this;
             dimensions = original.dimensions;
-            MtmVec<MtmVec<T>>::operator=((*this),original);
+            //MtmVec<MtmVec<T>>::operator=((*this),original);
+            this->MtmVec<MtmVec<T>>::operator=(original);
             return *this;
         }
 
@@ -69,14 +77,46 @@ namespace MtmMath {
          * row i of new matrix equals sum of scalar products of jth element of
          * row i of A * row j of B
          */
-        template<T>
         friend MtmMat<T> operator*(const MtmMat<T> &matrix1,
-                                   const MtmMat<T> &matrix2);
+                const MtmMat<T> &matrix2){
+
+            const size_t n = matrix1.dimensions.getCol();
+            if (n != matrix2.dimensions.getRow()) {
+                throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
+                                                       matrix2.dimensions);
+            }
+
+            //mathematically proven to be equivalent to ordinary matrix multiplication
+            const size_t numRows = matrix1.dimensions.getRow();
+            const size_t numCols = matrix2.dimensions.getCol();
+            MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
+            for (int answerRow = firstIndex; answerRow < numRows; ++answerRow) {
+                for (int runner = firstIndex; runner < n; ++runner) {
+                    answer[answerRow] = answer[answerRow]
+                                        + (matrix1[answerRow][runner] * matrix2[runner]);
+                }
+            }
+
+            return answer;
+        }
 
         //Matrix addition
-        template<T>
         friend MtmMat<T> operator+(const MtmMat<T> &matrix1,
-                                   const MtmMat<T> &matrix2);
+                const MtmMat<T> &matrix2){
+
+            const size_t numRows = matrix1.dimensions.getRow();
+            const size_t numCols = matrix1.dimensions.getCol();
+            if (matrix2.dimensions != matrix1.dimensions) {
+                throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
+                                                       matrix2.dimensions);
+            }
+
+            MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
+            for (int row = firstIndex; row < numRows; ++row) {
+                answer[row] = matrix1[row] + matrix2[row]; //vector addition
+            }
+            return answer;
+        }
 
         /*
          * Function that get function object f and uses it's () operator on each
@@ -231,12 +271,12 @@ namespace MtmMath {
 
     template<typename T>
     MtmMat<T>::MtmMat(const MtmVec<T> &original) : MtmMat<T>(Dimensions(
-            (original.is_column? original.size : 1),
-            (original.is_column? 1 : original.size)),0) {
+            (original.getIsColumn()? original.getSize() : 1),
+            (original.getIsColumn()? 1 : original.getSize())),0) {
 
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol();
-        for (int i = firstIndex; i < (original.is_column) ? rows : cols; ++i) {
-            if (original.is_column) {
+        for (int i = firstIndex; i < (original.getIsColumn()) ? rows : cols; ++i) {
+            if (original.getIsColumn()) {
                 (*this)[i][firstIndex] = original[i];
             } else {
                 (*this)[firstIndex][i] = original[i];
@@ -245,46 +285,8 @@ namespace MtmMath {
     }
 
     template<typename T>
-    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmMat<T> &matrix2) {
-        const size_t n = matrix1.dimensions.getCol();
-        if (n != matrix2.dimensions.getRows()) {
-            throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
-                                                   matrix2.dimensions);
-        }
-
-        //mathematically proven to be equivalent to ordinary matrix multiplication
-        const size_t numRows = matrix1.dimensions.getRow();
-        const size_t numCols = matrix2.dimensions.getCol();
-        MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
-        for (int answerRow = firstIndex; answerRow < numRows; ++answerRow) {
-            for (int runner = firstIndex; runner < n; ++runner) {
-                answer[answerRow] = answer[answerRow]
-                                    + (matrix1[answerRow][runner] * matrix2[runner]);
-            }
-        }
-
-        return answer;
-    }
-
-    template<typename T>
     MtmMat<T> operator*(const MtmVec<T> &vector1, const MtmVec<T> &vector2) {
         return MtmMat<T>(vector1) * MtmMat<T>(vector2);
-    }
-
-    template<typename T>
-    MtmMat<T> operator+(const MtmMat<T> &matrix1, const MtmMat<T> &matrix2) {
-        const size_t numRows = matrix1.dimensions.getRows();
-        const size_t numCols = matrix1.dimensions.getCols();
-        if (matrix2.dimensions != matrix1.dimensions) {
-            throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
-                                                   matrix2.dimensions);
-        }
-
-        MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
-        for (int row = firstIndex; row < numRows; ++row) {
-            answer[row] = matrix1[row] + matrix2[row]; //vector addition
-        }
-        return answer;
     }
 
     template<typename T>
@@ -372,7 +374,7 @@ namespace MtmMath {
     const MtmVec<T> MtmMat<T>::getColAsVector(size_t col) const {
         MtmVec<T> answer(dimensions.getRow(), defaultElement);
         for (int row = firstIndex; row < dimensions.getRow(); ++row) {
-            const T& cell = (*this)[row][col];
+            const T& cell = (*this)[row][col]; //DEBUG: assuming matFunc needs not make changes to matrix
             answer[row] = cell;
         }
         return answer;
