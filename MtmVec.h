@@ -230,7 +230,7 @@ namespace MtmMath {
             return is_column;
         }
 
-        bool getSize() const {
+        size_t getSize() const {
             return size;
         }
     };
