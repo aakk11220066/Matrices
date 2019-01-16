@@ -193,18 +193,17 @@ namespace MtmMath {
         class nonzero_iterator : iterator {
         public:
             nonzero_iterator &operator++() override {
-                if (*this != this->self->end()) iterator::operator++(*this);
+                if (*this != this->self->end()) this->iterator::operator++();
                 while (*this != this->self->end() && this->operator*() == 0) {
-                    iterator::operator++(*this);
+                    this->iterator::operator++();
                 }
+                return *this;
             }
 
         private:
-            template<T>
-            friend nonzero_iterator nzbegin();
+            friend nonzero_iterator MtmVec<T>::nzbegin();
 
-            template<T>
-            friend nonzero_iterator nzend();
+            friend nonzero_iterator MtmVec<T>::nzend();
 
             explicit nonzero_iterator(MtmVec *self, size_t startIndex) :
                     iterator(self, startIndex) {
@@ -300,9 +299,9 @@ namespace MtmMath {
         delete[] data;
     }
 
-
     template <typename T>
     class MtmVec<T>::iterator{
+    protected:
         int index=0;
         MtmVec* self = NULL;
 
