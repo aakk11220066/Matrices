@@ -53,7 +53,7 @@ namespace MtmMath {
                             "MtmError: Dimension mismatch: (")
                             += (to_string(mat1Dimensions.getRow()) += ",")
                             += (to_string(mat1Dimensions.getCol()) += ") (")
-                            += (to_string(mat1Dimensions.getRow()) += ",")
+                            += (to_string(mat2Dimensions.getRow()) += ",")
                             += to_string(mat2Dimensions.getCol()) += ")"
                             ) {}
         };
