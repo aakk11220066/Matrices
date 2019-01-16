@@ -85,7 +85,7 @@ namespace MtmMath {
 
         //Scalar addition
         virtual MtmVec<T> operator+(const T &scalar) const {
-            MtmVec<T> answer(size, defaultElement);
+            MtmVec<T> answer(*this);
             for (int i = firstIndex; i < size; ++i) {
                 answer[i] = (*this)[i] + scalar;
             }
@@ -256,7 +256,7 @@ namespace MtmMath {
             throw MtmExceptions::DimensionMismatch(Dimensions(rows, cols),
                                                    Dimensions(otherRows, otherCols));
         }
-        MtmVec<T> answer(size, defaultElement);
+        MtmVec<T> answer(*this);
         for (int i = firstIndex; i < size; ++i) answer[i] = (*this)[i] + other[i];
         return answer;
     }

@@ -90,7 +90,7 @@ namespace MtmMath {
             for (int answerRow = firstIndex; answerRow < numRows; ++answerRow) {
                 for (int runner = firstIndex; runner < n; ++runner) {
                     answer[answerRow] = answer[answerRow]
-                                        + (matrix1[answerRow][runner] * matrix2[runner]);
+                        + (matrix1[answerRow][runner] * matrix2[runner]);
                 }
             }
 
@@ -117,7 +117,7 @@ namespace MtmMath {
                                                        matrix2.dimensions);
             }
 
-            MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
+            MtmMat<T> answer(matrix1);
             for (int row = firstIndex; row < numRows; ++row) {
                 answer[row] = matrix1[row] + matrix2[row]; //vector addition
             }
@@ -407,6 +407,7 @@ namespace MtmMath {
             answer[col] = getColAsVector(col).vecFunc(f);
         };
 
+        answer.transpose();
         return answer;
     }
 

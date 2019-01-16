@@ -64,7 +64,7 @@ namespace MtmMath {
     template <typename T>
     MtmVec<T>& RootVector<T>::operator[](size_t index) {
         if (index >= size) throw MtmExceptions::AccessIllegalElement();
-        return vectors[index];
+        return vectors.at(index);
     }
 
     template <typename T>
