@@ -8,10 +8,10 @@ namespace MtmMath {
     class Complex {
         double re, im;
     public:
-        Complex(double r = 0, double i = 0) : //Roi : I removed "virtual" keyword, constructor should accept automatic promotion (e.g. putting 0 into matrix of complex numbers)
+        Complex(double r = 0, double i = 0) :
                 re(r), im(i) {}
 
-        virtual ~Complex() = default; //Roi : all destructors should be virtual (prevents bugs when making polymorphisms)
+        virtual ~Complex() = default;
 
         Complex(const Complex &) = default;
 
@@ -27,10 +27,19 @@ namespace MtmMath {
 
         bool operator==(const Complex &c) const;
 
-        std::string to_string(Complex& num){ //DEBUG
-            return std::to_string(re)+=std::string("+")+=std::to_string(im)+=std::string("i");
+        bool operator!=(const Complex& c) const{
+            return !((*this) == c);
+        } //Roi: added this
+
+        std::string to_string(){ //DEBUG
+            const int accuracy = 2;
+            return std::to_string(re).substr(0,accuracy)+=std::string("+")+=std::to_string(im).substr(0,accuracy)+=std::string("i");
         }
     };
+
+    std::ostream& operator<<(std::ostream& stream, Complex& c){
+        return stream<<c.to_string();
+    }//DEBUG
 
     MtmMath::Complex operator+(const Complex &a, const Complex &b);
 
@@ -46,8 +55,9 @@ namespace MtmMath {
     }
 
     MtmMath::Complex &Complex::operator*=(const Complex &c) {
-        re *= c.re;
-        im *= c.im;
+        auto oldReal = re;
+        re = (re*c.re) - (im*c.im);
+        im = (oldReal*c.im) + (im*c.re);
         return *this;
     }
 

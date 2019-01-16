@@ -110,18 +110,18 @@ int main() {
         //MtmVec<int> v2(4,7);
         //MtmVec<int> v4 (2,6);
 
-        MtmMat<int> m1(Dimensions(4,9), 20);
+        MtmMat<Complex> m1(Dimensions(4,9), Complex(14,16));
 
         cout << "Matrix 1:";
         m1.printMatrix();
         cout << endl;
 
         // MtmMat<int> m2 = m1;
-        m1 = 3 + m1;
+        m1 = Complex(3,-2) * m1;
        // MtmMat<int> m3 = m1*m2;
        // MtmMat(int> m4 = m1+m2;
 
-       cout << "Matrix1 * 3 =";
+       cout << "Matrix1 * 3-2i =";
        m1.printMatrix();
 
         //v2[2] = 3;
