@@ -102,15 +102,6 @@ assert(res[0]==2 and res[1]==3 and res[2]==6);*/
 
 int main() {
     try {
-        /*cout<<"vector1 = "<<endl;
-        MtmVec<int> v1(4, 8);
-        v1.print_vec();
-        cout<<"v1 + 2 = "<<endl;
-        (v1 + 3).print_vec();*/
-        //MtmVec<int> v2(4,7);
-        //MtmVec<int> v4 (2,6);
-
-        //MtmMat<Complex> m1(Dimensions(4,9), Complex(14,16));
         MtmMat<int> m1(Dimensions(3,4), 2);
         m1[0][0] = m1[1][1] = m1[2][2] = 8;
         cout << "Matrix 1:";
@@ -123,16 +114,21 @@ int main() {
         m2[2][3] = 13;
         m2[1][0] = 20;
         m2[0][1] = 15;
-        m2.transpose();
         cout << "Matrix 2:";
         m2.printMatrix();
         cout << endl;
-       //MtmMat<int> m3 = m1*m2;
 
-       MtmMat<int> m4 = m1+m2;
+        m2.transpose();
+        cout << "Matrix 2 after transpose:";
+        m2.printMatrix();
+        cout << endl;
 
-       cout << "Matrix1 + 9(3Matrix1 - 5) =";
-       m4.printMatrix();
+        MtmMat<int> m4 = m1*m2;
+        //m4[0][3] = 13;
+
+        cout << "Matrix1 * Matrix2 =";
+        m4.printMatrix();
+
 
         //v2[2] = 3;
         //v2[3] = 2;

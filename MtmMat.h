@@ -310,6 +310,13 @@ namespace MtmMath {
         }
     }
 
+    template <typename T>
+    void swap(T& a, T& b){
+        T temp = a;
+        a = b;
+        b = temp;
+    }
+
     template<typename T>
     MtmMat<T>::MtmMat(const MtmVec<T> &original) : MtmMat<T>(Dimensions(
             (original.getIsColumn()? original.getSize() : 1),
@@ -344,13 +351,16 @@ namespace MtmMath {
         //POTENTIAL ERROR: replacing matrix (rather than modifying) may reset
         // additional properties of subclasses
 
-        //mathematically proven to be equivalent to transposition
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol(),
                 maxDim = (rows > cols) ? rows : cols;
         resize(Dimensions(maxDim, maxDim), defaultElement); //make matrix square
-        *this = exchangeMatrix(dimensions.getRow())
-                * (*this)
-                * exchangeMatrix(dimensions.getCol());
+
+        for (int i=firstIndex; i<maxDim; ++i){
+            for (int j=i; j<maxDim; j++){
+                swap((*this)[i][j], (*this)[j][i]);
+            }
+        }
+
         resize(Dimensions(cols, rows), errorValue);
     }
 
