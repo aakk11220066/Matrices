@@ -104,10 +104,10 @@ namespace MtmMath {
                 answer[row] = (*this)[row] * scalar;
             }
             return answer;
-        }
+        } //FIXME: does nothing
 
         //Matrix addition
-        friend MtmMat<T> operator+(const MtmMat<T> &matrix1,
+        friend MtmMat<T> operator+(const MtmMat<T> &matrix1, //FIXME: does nothing
                 const MtmMat<T> &matrix2){
 
             const size_t numRows = matrix1.dimensions.getRow();
@@ -232,9 +232,20 @@ namespace MtmMath {
             return nonzero_iterator(this, temp.linearIndex);
         }
 
-        Dimensions getDimensions(){
+        Dimensions getDimensions() const{
             return dimensions;
         }
+
+        void printMatrix(){
+            cout << endl;
+            MtmMat<T>& mat = (*this);
+            for (int i = 0; i <mat.getDimensions().getRow(); i++){
+                for (int j = 0; j<mat.getDimensions().getCol(); j++){
+                    cout << mat[i][j] << " ";
+                }
+                cout << endl;
+            }
+        } //DEBUG
     };
 
     //matrix-vector multiplication (promotion on hold because class is generic)

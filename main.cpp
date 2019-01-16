@@ -100,39 +100,29 @@ assert(res[0]==2 and res[1]==3 and res[2]==6);*/
     }
 }*/
 
-
 int main() {
     try {
-        //MtmVec<int> v1(4, 8);
-        //v1.print_vec();
+        /*cout<<"vector1 = "<<endl;
+        MtmVec<int> v1(4, 8);
+        v1.print_vec();
+        cout<<"v1 + 2 = "<<endl;
+        (v1 + 3).print_vec();*/
         //MtmVec<int> v2(4,7);
         //MtmVec<int> v4 (2,6);
 
-        int a =2, b=4;
-        MtmMat<int> m1(Dimensions(a,b),8);
-        m1[0][2] = 7;
-        //m1[2][2] = 2;
-        for (int i = 0; i <a; i++){
-            for (int j = 0; j<b; j++){
-                cout << m1[i][j] << " ";
-            }
-            cout << endl;
-        }
+        MtmMat<int> m1(Dimensions(4,9), 20);
+
+        cout << "Matrix 1:";
+        m1.printMatrix();
         cout << endl;
-        cout << endl;
-        cout << endl;
+
         MtmMat<int> m2 = m1;
-
-        //MtmMat<int> m2 = m1;
+        m1 = m1 * 3;
        // MtmMat<int> m3 = m1*m2;
+       // MtmMat(int> m4 = m1+m2;
 
-        cout << endl;
-        for (int i = 0; i <a; i++){
-            for (int j = 0; j<b; j++){
-                cout << m2[i][j] << " ";
-            }
-            cout << endl;
-        }
+       cout << "Matrix1 * 3 =";
+       m2.printMatrix();
 
         //v2[2] = 3;
         //v2[3] = 2;
