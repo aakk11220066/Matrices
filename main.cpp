@@ -105,8 +105,11 @@ int main() {
     try {
         //MtmVec<int> v1(4, 8);
         //MtmVec<int> v2(4,7);
-        //MtmVec<int> v4 (2,6);
-        MtmMat<int> m1(Dimensions(2,3),0);
+        MtmVec<int> v4 (6,7);
+        v4[4] = 3;
+        cout << "four sevens, one 3, and then a seven:" << endl;
+        for (int elem : v4) cout << elem << ", " << endl;
+        //MtmMat<int> m1(Dimensions(2,3),0);
         //v1.print_vec();
         //v2[2] = 3;
         //v2[3] = 2;

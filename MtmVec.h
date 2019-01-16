@@ -184,43 +184,11 @@ namespace MtmMath {
             return lockEndIndex = index;
         }
 
-        class iterator{
-            int index=0;
-            MtmVec* self = NULL;
+        class iterator;
 
-            iterator(MtmVec<T>* self, size_t startIndex=0) : self(self),
-                                                             index(startIndex){};
+        iterator begin();
 
-            template <T>
-            friend iterator MtmVec::begin();
-
-            template <T>
-            friend iterator MtmVec::end();
-        public:
-            T& operator*(){
-                return (*this)[index];
-            }
-            friend bool operator==(iterator& iterator1, iterator& iterator2){
-                return iterator1.index == iterator2.index;
-            }
-            friend bool operator!=(iterator& iterator1, iterator& iterator2){
-                return !(iterator1==iterator2);
-            }
-            virtual iterator& operator++() {
-                if (*this != this->end()) {
-                    return (*this)[index];
-                }
-            }
-        };
-
-        iterator begin(){
-            return iterator(this);
-        }
-
-        iterator end(){
-            return iterator(this, size);
-        }
-
+        iterator end();
 
         class nonzero_iterator : iterator {
         public:
@@ -330,6 +298,46 @@ namespace MtmMath {
     template<typename T>
     MtmVec<T>::~MtmVec() {
         delete[] data;
+    }
+
+
+    template <typename T>
+    class MtmVec<T>::iterator{
+        int index=0;
+        MtmVec* self = NULL;
+
+        iterator(MtmVec<T>* self, size_t startIndex=0) : self(self),
+                                                         index(startIndex){};
+        friend iterator MtmVec::begin();
+
+        friend iterator MtmVec::end();
+
+    public:
+        T& operator*(){
+            return (*self)[index];
+        }
+        bool operator==(iterator iterator2){
+            return index == iterator2.index;
+        } //FIXME: reference would be prefereable
+        bool operator!=(iterator iterator2){
+            return !((*this)==iterator2);
+        } //FIXME: reference would be prefereable
+        virtual iterator& operator++() {
+            if (*this != self->end()) {
+                ++index;
+            }
+            return *this;
+        }
+    };
+
+    template <typename T>
+    typename MtmVec<T>::iterator MtmVec<T>::begin(){
+        return iterator(this);
+    }
+
+    template <typename T>
+    typename MtmVec<T>::iterator MtmVec<T>::end(){
+        return iterator(this, size);
     }
 }
 
