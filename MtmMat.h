@@ -319,15 +319,16 @@ namespace MtmMath {
 
     template<typename T>
     MtmMat<T>::MtmMat(const MtmVec<T> &original) : MtmMat<T>(Dimensions(
-            (original.getIsColumn()? original.getSize() : 1),
-            (original.getIsColumn()? 1 : original.getSize())),0) {
-
+            (original.getIsColumn()? 1 : original.getSize()),
+            (original.getIsColumn()? original.getSize() : 1)),0) {
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol();
-        for (int i = firstIndex; i < (original.getIsColumn()) ? rows : cols; ++i) {
+        cout << rows << cols << endl;
+        for (int i = firstIndex; i < ((original.getIsColumn()) ? cols :
+        rows); ++i) {
             if (original.getIsColumn()) {
-                (*this)[i][firstIndex] = original[i];
-            } else {
                 (*this)[firstIndex][i] = original[i];
+            } else {
+                (*this)[i][firstIndex] = original[i];
             }
         }
     }
