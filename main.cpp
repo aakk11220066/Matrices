@@ -58,7 +58,7 @@ void exceptionsTest() {
 
 void constructors() {
     MtmVec<int> v1(5,3);
-    //MtmMat<int> m1(Dimensions(3,3),0);
+    MtmMat<int> m1(Dimensions(3,3),0);
     //MtmMatSq<int> m2(3,1);
     //MtmMatTriag<int> m3(3,1,true);
 }
@@ -71,16 +71,16 @@ void dataTypes() {
 }
 */
 
-    //MtmVec<int> v(5,0);
-    //v[1]=3;v[2]=-7;v[3]=-1;//v[4]=2;
-    /*MtmMat<int> m(Dimensions(2,3),0);
-    m[0][1]=1;m[1][0]=2;
-    m[0][1]=3;m[1][1]=2;
-    m[0][2]=5;m[1][2]=-6;
-    maxAbsolute f;
-    assert (v.vecFunc(f)==7);
-    MtmVec<int> res(m.matFunc(f));
-    assert(res[0]==2 and res[1]==3 and res[2]==6);*/
+//MtmVec<int> v(5,0);
+//v[1]=3;v[2]=-7;v[3]=-1;//v[4]=2;
+/*MtmMat<int> m(Dimensions(2,3),0);
+m[0][1]=1;m[1][0]=2;
+m[0][1]=3;m[1][1]=2;
+m[0][2]=5;m[1][2]=-6;
+maxAbsolute f;
+assert (v.vecFunc(f)==7);
+MtmVec<int> res(m.matFunc(f));
+assert(res[0]==2 and res[1]==3 and res[2]==6);*/
 
 
 /*void iterators() {
@@ -103,14 +103,35 @@ void dataTypes() {
 
 int main() {
     try {
-        //MtmVec<int> v1(4, 8);
+        MtmVec<int> v1(4, 8);
+        v1.print_vec();
         //MtmVec<int> v2(4,7);
-        MtmVec<int> v4 (6,7);
-        v4[4] = 3;
-        cout << "four sevens, one 3, and then a seven:" << endl;
-        for (int elem : v4) cout << elem << ", " << endl;
-        //MtmMat<int> m1(Dimensions(2,3),0);
-        //v1.print_vec();
+        //MtmVec<int> v4 (2,6);
+
+        int a =2, b=4;
+        MtmMat<int> m1(Dimensions(a,b),8);
+        //m1[0][2] = 7;
+        //m1[2][2] = 2;
+        for (int i = 0; i <a; i++){
+            for (int j = 0; j<b; j++){
+                cout << m1[i][j] << " ";
+            }
+            cout << endl;
+        }
+
+        MtmMat<int> m2 = m1;
+
+        //MtmMat<int> m2 = m1;
+        //MtmMat<int> m3 = m1*m2;
+        /*
+        cout << endl;
+        for (int i = 0; i <a; i++){
+            for (int j = 0; j<b; j++){
+                cout << m2[i][j] << " ";
+            }
+            cout << endl;
+        }
+*/
         //v2[2] = 3;
         //v2[3] = 2;
         //v1 = v2;
@@ -135,4 +156,3 @@ int main() {
         cout<< e.what() <<endl;
     }
 }
-
