@@ -116,13 +116,13 @@ int main() {
         m1.printMatrix();
         cout << endl;
 
-        MtmMat<int> m2 = m1;
-        m1 = m1 * 3;
+        // MtmMat<int> m2 = m1;
+        m1 = 3 + m1;
        // MtmMat<int> m3 = m1*m2;
        // MtmMat(int> m4 = m1+m2;
 
        cout << "Matrix1 * 3 =";
-       m2.printMatrix();
+       m1.printMatrix();
 
         //v2[2] = 3;
         //v2[3] = 2;

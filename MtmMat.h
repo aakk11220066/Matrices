@@ -98,16 +98,16 @@ namespace MtmMath {
         }
 
         //scalar multiplication
-        MtmMat<T> operator*(const T& scalar){
+        MtmMat<T> operator*(const T& scalar) const {
             MtmMat<T> answer(*this);
             for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
                 answer[row] = (*this)[row] * scalar;
             }
             return answer;
-        } //FIXME: does nothing
+        }
 
         //Matrix addition
-        friend MtmMat<T> operator+(const MtmMat<T> &matrix1, //FIXME: does nothing
+        friend MtmMat<T> operator+(const MtmMat<T> &matrix1,
                 const MtmMat<T> &matrix2){
 
             const size_t numRows = matrix1.dimensions.getRow();
@@ -125,7 +125,7 @@ namespace MtmMath {
         }
 
         //scalar addition
-        MtmMat<T> operator+(const T& scalar){
+        MtmMat<T> operator+(const T& scalar) const {
             MtmMat<T> answer(*this);
             for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
                 answer[row] = (*this)[row] + scalar;
@@ -253,17 +253,17 @@ namespace MtmMath {
     MtmMat<T> operator*(const MtmVec<T> &vector1, const MtmVec<T> &vector2);
 
     template<typename T>
-    MtmMat<T> operator*(const MtmVec<T> &vector1, const MtmMat<T> &matrix2) {
+    MtmMat<T> operator*(const MtmVec<T> &vector1, const MtmMat<T> &matrix2)  {
         return MtmMat<T>(vector1) * matrix2;
     }
 
     template<typename T>
-    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2) {
+    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2)  {
         return MtmMat<T>(vector2) * matrix1;
     }
 
     template <typename T>
-    MtmMat<T> operator*(const T &scalar, const MtmMat<T> &matrix){
+    MtmMat<T> operator*(const T &scalar, const MtmMat<T> &matrix)  {
         return matrix*scalar;
     }
 
@@ -276,6 +276,11 @@ namespace MtmMath {
     template <typename T>
     MtmMat<T> operator+(const MtmMat<T>& matrix1, const MtmVec<T>& vector2) {
         return vector2+matrix1;
+    }
+
+    template <typename T>
+    MtmMat<T> operator+(const T &scalar, const MtmMat<T> &matrix)  {
+        return matrix+scalar;
     }
 
 
