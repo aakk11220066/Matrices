@@ -322,7 +322,6 @@ namespace MtmMath {
             (original.getIsColumn()? 1 : original.getSize()),
             (original.getIsColumn()? original.getSize() : 1)),0) {
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol();
-        cout << rows << cols << endl;
         for (int i = firstIndex; i < ((original.getIsColumn()) ? cols :
         rows); ++i) {
             if (original.getIsColumn()) {
