@@ -6,6 +6,7 @@
 #include "MtmExceptions.h"
 #include "Auxilaries.h"
 #include "MtmVec.h"
+#include "RootVector.h"
 #include <cassert>
 
 using std::size_t;
@@ -18,7 +19,7 @@ namespace MtmMath {
     class MtmMat;
 
     template<typename T>
-    class MtmMat : public MtmVec<MtmVec<T>> {
+    class MtmMat : public RootVector<T> {
     protected:
         Dimensions dimensions;
 
@@ -58,8 +59,7 @@ namespace MtmMath {
         virtual MtmMat<T> &operator=(const MtmMat &original){
             if (this == &original) return *this;
             dimensions = original.dimensions;
-            //MtmVec<MtmVec<T>>::operator=((*this),original);
-            this->MtmVec<MtmVec<T>>::operator=(original);
+            this->RootVector<T>::operator=(original);
             return *this;
         }
 
@@ -231,6 +231,10 @@ namespace MtmMath {
             iterator temp = end();
             return nonzero_iterator(this, temp.linearIndex);
         }
+
+        Dimensions getDimensions(){
+            return dimensions;
+        }
     };
 
     //matrix-vector multiplication (promotion on hold because class is generic)
@@ -281,7 +285,7 @@ namespace MtmMath {
 
     template<typename T>
     MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
-        MtmVec<MtmVec<T>>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
+        RootVector<T>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
 
         //make sub-vectors horizontal
         for (int row = firstIndex; row < dim_t.getRow(); ++row) {

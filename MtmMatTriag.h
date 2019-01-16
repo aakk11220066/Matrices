@@ -59,11 +59,6 @@ namespace MtmMath {
             MtmMatSq<T>::resize(dim, val);
             triangulate(*this, upper);
         }
-
-        //TODO: override operator+(MtmMatTriag, MtmMatTriag)
-
-        //TODO: override iterator and nziterator
-
     };
 
     //implementation begins here
@@ -105,7 +100,7 @@ namespace MtmMath {
 
     template<typename T>
     void MtmMatTriag<T>::triangulate(MtmMatSq<T> target, bool makeUpper) {
-        const size_t m = target.dimensions.getRow();
+        const size_t m = target.getDimensions().getRow();
         for (size_t row = 0; row < m; ++row) {
             target[row].setLock(false); //unlock row
             for (int col = 0; col < m; ++col) {

@@ -9,9 +9,9 @@
 //DEBUG
 #include <iostream>
 #include <string>
-using std::cout;
-using std::endl; //FIXME
-using std::size_t; //FIXME
+using std::cout; //DEBUG
+using std::endl; //DEBUG
+using std::size_t;
 #define firstIndex 0 //DEBUG
 #define defaultElement 0 //DEBUG
 
@@ -21,7 +21,7 @@ namespace MtmMath {
     class MtmVec {
     private:
         MtmVec *self;
-        T *data; //FIXME
+        T *data;
         bool locked=false;
         size_t lockStartIndex = 0;
         size_t lockEndIndex = size-1; //FIXME
@@ -56,7 +56,7 @@ namespace MtmMath {
         }
 
         //assignment operator
-        MtmVec<T> &operator=(const MtmVec<T> original) {
+        MtmVec<T> &operator=(const MtmVec<T>& original) {
             if (this == &original) return *this;
             delete[] data;
             size = original.size;
@@ -192,10 +192,10 @@ namespace MtmMath {
                                                              index(startIndex){};
 
             template <T>
-            friend iterator begin();
+            friend iterator MtmVec::begin();
 
             template <T>
-            friend iterator end();
+            friend iterator MtmVec::end();
         public:
             T& operator*(){
                 return (*this)[index];

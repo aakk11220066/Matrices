@@ -12,4 +12,5 @@ add_executable(Matrices
         MtmMatSq.h
         MtmMatTriag.h
         MtmVec.h
+        RootVector.h
         main.cpp)

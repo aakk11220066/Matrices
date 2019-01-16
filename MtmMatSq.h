@@ -13,7 +13,6 @@ namespace MtmMath {
     template <typename T>
     class MtmMatSq : public MtmMat<T> {
     public:
-
         /*
          * Rectangular Matrix constructor, m is the number of rows and columns in the matrix
          * and val is the initial value for the matrix elements
