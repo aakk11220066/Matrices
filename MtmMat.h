@@ -74,7 +74,7 @@ namespace MtmMath {
          * row i of new matrix equals sum of scalar products of jth element of
          * row i of A * row j of B
          */
-        friend MtmMat<T> operator*(const MtmMat<T> &matrix1,
+                friend MtmMat<T> operator*(const MtmMat<T> &matrix1,
                 const MtmMat<T> &matrix2){
 
             const size_t n = matrix1.dimensions.getCol();
@@ -87,13 +87,14 @@ namespace MtmMath {
             const size_t numRows = matrix1.dimensions.getRow();
             const size_t numCols = matrix2.dimensions.getCol();
             MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
-            for (int answerRow = firstIndex; answerRow < numRows; ++answerRow) {
-                for (int runner = firstIndex; runner < n; ++runner) {
-                    answer[answerRow] = answer[answerRow]
-                        + (matrix1[answerRow][runner] * matrix2[runner]);
+            for (int i = firstIndex; i < numRows; ++i) {
+                for (int j = firstIndex; j < numCols; ++j) {
+                    for (int runner = firstIndex; runner < n; ++runner) {
+                        answer[i][j] += matrix1[i][runner] *
+                                        matrix2[runner][j];
+                    }
                 }
             }
-
             return answer;
         }
 
