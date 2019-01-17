@@ -39,7 +39,7 @@ namespace MtmMath {
 
         //calculates linear index of matrix coordinates
         size_t coordinatesToLinearIndex(size_t row, size_t col) {
-            return (size_t) dimensions.getRow() * col + row;
+            return dimensions.getRow() * dimensions.getCol();
         }
 
     public:
@@ -108,7 +108,7 @@ namespace MtmMath {
 
         //Matrix addition
         friend MtmMat<T> operator+(const MtmMat<T> &matrix1,
-                const MtmMat<T> &matrix2){
+                                   const MtmMat<T> &matrix2){
 
             const size_t numRows = matrix1.dimensions.getRow();
             const size_t numCols = matrix1.dimensions.getCol();
@@ -197,8 +197,8 @@ namespace MtmMath {
 
         iterator end() {
             return iterator(this,
-                    coordinatesToLinearIndex(dimensions.getRow() - 1,
-                        dimensions.getCol() - 1) + 1);
+                            coordinatesToLinearIndex(dimensions.getRow() - 1,
+                                                     dimensions.getCol() - 1) + 1);
         }
 
         class nonzero_iterator : iterator {
@@ -301,7 +301,7 @@ namespace MtmMath {
 
     template<typename T>
     MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
-        RootVector<T>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
+                                                        RootVector<T>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
 
         //make sub-vectors horizontal
         for (int row = firstIndex; row < dim_t.getRow(); ++row) {
@@ -322,7 +322,7 @@ namespace MtmMath {
             (original.getIsColumn()? original.getSize() : 1)),0) {
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol();
         for (int i = firstIndex; i < ((original.getIsColumn()) ? cols :
-        rows); ++i) {
+                                      rows); ++i) {
             if (original.getIsColumn()) {
                 (*this)[firstIndex][i] = original[i];
             } else {
@@ -372,6 +372,7 @@ namespace MtmMath {
         const size_t maxIndex =
                 MtmMat<T>::coordinatesToLinearIndex(numRows - 1, numCols - 1);
         //sanitize inputs
+        cout << numRows << " " << numCols << " " << maxIndex << endl;
         if ((newDim.getRow() <= firstIndex || newDim.getCol() <= firstIndex)
             ||(dimensions.getCol() * dimensions.getRow() != numRows * numCols)){
 
