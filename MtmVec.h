@@ -269,6 +269,7 @@ namespace MtmMath {
                                                    Dimensions(otherRows, otherCols));
         }
         MtmVec<T> answer(*this);
+        answer.setLock(false);
         for (int i = firstIndex; i < size; ++i) answer[i] = (*this)[i] + other[i];
         return answer;
     }
@@ -281,9 +282,12 @@ namespace MtmMath {
     template<typename T>
     MtmVec<T> MtmVec<T>::operator*(const T &scalar) const {
         MtmVec<T> answer(*this);
+        bool wasLocked = locked;
+        answer.setLock(false);
         for (int i = firstIndex; i < size; ++i) {
             answer[i] = answer[i] * scalar;
         }
+        answer.setLock(wasLocked);
         return answer;
     }
 

@@ -59,8 +59,6 @@ namespace MtmMath {
             MtmMatSq<T>::resize(dim, val);
             triangulate(*this, upper);
         }
-
-        //TODO: ensure operator+ returns MtmMat
     };
 
     //implementation begins here

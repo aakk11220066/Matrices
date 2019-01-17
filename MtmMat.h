@@ -119,6 +119,7 @@ namespace MtmMath {
             }
 
             MtmMat<T> answer(matrix1);
+            answer.setLock(false);
             for (int row = firstIndex; row < numRows; ++row) {
                 answer[row] = matrix1[row] + matrix2[row]; //vector addition
             }
@@ -128,6 +129,7 @@ namespace MtmMath {
         //scalar addition
         MtmMat<T> operator+(const T& scalar) const {
             MtmMat<T> answer(*this);
+            answer.setLock(false);
             for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
                 answer[row] = (*this)[row] + scalar;
             }
