@@ -160,7 +160,6 @@ namespace MtmMath {
         virtual void transpose();
 
         class iterator {
-            //Roi : POTENTIAL ERROR: code replication?
         protected:
             MtmMat *self;
             size_t linearIndex;
@@ -180,11 +179,13 @@ namespace MtmMath {
                 return self->linearIndexToReference(linearIndex);
             }
 
-            template<T>
-            friend bool operator==(const iterator &me, const iterator &other);
+            bool operator==(const iterator &other){
+                return linearIndex == other.linearIndex;
+            }
 
-            template<T>
-            friend bool operator!=(const iterator &me, const iterator &other);
+            bool operator!=(const iterator &other){
+                return !((*this) == other);
+            }
 
             virtual iterator &operator++() {
                 if (*this != self->end()) ++linearIndex;
@@ -286,19 +287,6 @@ namespace MtmMath {
 
 
     //implementations begin here
-
-    template<typename T>
-    bool operator!=(typename MtmMat<T>::iterator me,
-                    typename MtmMat<T>::iterator other) {
-        return !(me == other);
-    }
-
-    template<typename T>
-    bool operator==(const typename MtmMat<T>::iterator &me,
-                    const typename MtmMat<T>::iterator &other) {
-        return me.linearIndex == other.linearIndex;
-    }
-
     template<typename T>
     MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
                                                         RootVector<T>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
