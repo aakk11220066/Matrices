@@ -24,7 +24,7 @@ namespace MtmMath {
         T *data;
         bool locked=false;
         size_t lockStartIndex = 0;
-        size_t lockEndIndex = size-1; //FIXME
+        size_t lockEndIndex = size-1; //FIXME: Roi - what do we need to fix here?
     protected:
         bool is_column = true;
         size_t size;
@@ -38,7 +38,7 @@ namespace MtmMath {
         virtual ~MtmVec();
 
         //copy constructor
-        MtmVec<T>(const MtmVec<T> &original) : size(original.size) { //TODO: add lock mechanism
+        MtmVec<T>(const MtmVec<T> &original) : size(original.size) {
             try {
                 data = new T[size];
             } catch (std::bad_alloc) {
@@ -318,10 +318,10 @@ namespace MtmMath {
         }
         bool operator==(iterator iterator2){
             return index == iterator2.index;
-        } //FIXME: reference would be prefereable
+        }
         bool operator!=(iterator iterator2){
             return !((*this)==iterator2);
-        } //FIXME: reference would be prefereable
+        }
         virtual iterator& operator++() {
             if (*this != self->end()) {
                 ++index;
