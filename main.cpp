@@ -105,25 +105,10 @@ assert(res[0]==2 and res[1]==3 and res[2]==6);*/
 int main() {
     try {
         MtmMat<int> m1(Dimensions(4,4), 6);
-        m1[1][0]=m1[2][0]=m1[2][1]=m1[3][0]=m1[3][1]=m1[3][2]=0;
+        for (int i=0; i<16; ++i);
         MtmMatTriag<int> m1tri(m1);
-        cout<<"m1sq before resize = ";
+        cout<<"Matrix1 = ";
         m1tri.printMatrix();
-
-        m1tri.resize(Dimensions(6,6), 3);
-        cout<<"m1sq after resize to (6,6) = ";
-        m1tri.printMatrix();
-
-        m1tri.resize(Dimensions(3,3), 3);
-        cout<<"m1sq after resize to (3,3) = ";
-        m1tri.printMatrix();
-
-        try{
-            m1tri.resize(Dimensions(2,3), 99);
-            assert(false);
-        } catch(MtmExceptions::ChangeMatFail& e){
-            cout<<e.what()<<endl;
-        }
     }
     catch (MtmExceptions::IllegalInitialization& e){
         cout<< e.what() <<endl;

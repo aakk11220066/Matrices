@@ -41,6 +41,12 @@ namespace MtmMath {
 
         //const operator[]
         virtual const MtmVec<T>& operator[](size_t index) const;
+
+        void setLock(bool newStatus){
+            for (int i=0; i<size; i++){
+                (*this)[i].MtmVec<T>::setLock(newStatus);
+            }
+        }
     };
 
     template <typename T>
@@ -62,13 +68,13 @@ namespace MtmMath {
     }
 
     template <typename T>
-    MtmVec<T>& RootVector<T>::operator[](size_t index) {
+    const MtmVec<T>& RootVector<T>::operator[](size_t index) const {
         if (index >= size) throw MtmExceptions::AccessIllegalElement();
         return vectors.at(index);
     }
 
     template <typename T>
-    const MtmVec<T>& RootVector<T>::operator[](size_t index) const {
+    MtmVec<T>& RootVector<T>::operator[](size_t index) {
         if (index >= size) throw MtmExceptions::AccessIllegalElement();
         return vectors.at(index);
     }

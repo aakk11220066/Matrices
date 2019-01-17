@@ -70,6 +70,11 @@ namespace MtmMath {
             for (int i = firstIndex; i < original.size; ++i) {
                 (*this)[i] = original[i];
             }
+
+            locked = original.locked;
+            lockStartIndex = original.lockStartIndex;
+            lockEndIndex = original.lockEndIndex;
+
             return *this;
         }
 

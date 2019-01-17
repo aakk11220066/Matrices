@@ -389,11 +389,14 @@ namespace MtmMath {
         MtmMat<T> replacement(dim, val);
         for (int row = firstIndex; row < dimensions.getRow() && row < dim.getRow(); ++row) {
             for (int col = firstIndex; col < dimensions.getCol() && col < dim.getCol(); ++col) {
-                const T& transferElement = (*this)[row][col];
+                const auto* const_this = this;
+                const T& transferElement = (*const_this)[row][col];
                 replacement[row][col] = transferElement;
             }
         }
+        (*this).setLock(false);
         (*this) = replacement;
+        (*this).setLock(true);
     }
 
     template<typename T>
