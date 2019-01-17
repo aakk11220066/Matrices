@@ -74,7 +74,7 @@ namespace MtmMath {
         public:
             ChangeMatFail(Dimensions oldMatDimensions,
                     Dimensions newMatDimensions) : MtmExceptions( std::string(
-                    "MtmError: Change matrix shape failed from: (")
+                    "MtmError: Change matrix shape failed from (")
                     += (to_string(oldMatDimensions.getRow()) += ",")
                     += (to_string(oldMatDimensions.getCol()) += ") to (")
                     += (to_string(newMatDimensions.getRow()) += ",")

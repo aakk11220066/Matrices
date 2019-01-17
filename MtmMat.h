@@ -37,6 +37,11 @@ namespace MtmMath {
             return (*this)[row][col];
         } //TODO: add const version and make iterators call it
 
+        const T& linearIndexToReference(size_t linearIndex) const {
+            return const_cast<const T&>(const_cast<T&>(this)->
+                linearIndexToReference(linearIndex));
+        }
+
         //calculates linear index of matrix coordinates
         size_t coordinatesToLinearIndex(size_t row, size_t col) {
             const size_t colIndex = (*this).getDimensions().getRow() * col;
@@ -181,6 +186,10 @@ namespace MtmMath {
 
         public:
             T& operator*() {
+                return self->linearIndexToReference(linearIndex);
+            }
+
+            const T& operator*() const {
                 return self->linearIndexToReference(linearIndex);
             }
 
@@ -368,7 +377,6 @@ namespace MtmMath {
         const size_t maxIndex =
                 MtmMat<T>::coordinatesToLinearIndex(numRows - 1, numCols - 1);
         //sanitize inputs
-        cout << numRows << " " << numCols << " " << maxIndex << endl;
         if ((newDim.getRow() <= firstIndex || newDim.getCol() <= firstIndex)
             ||(dimensions.getCol() * dimensions.getRow() != numRows * numCols)){
 
@@ -407,14 +415,15 @@ namespace MtmMath {
 
     template<typename T>
     template<typename Func>
-    MtmVec<T> MtmMat<T>::matFunc(Func &f) const { //FIXME: make copies of f to run on each column
+    MtmVec<T> MtmMat<T>::matFunc(Func &f) const {
         //create vector to hold result
         MtmVec<T> answer(dimensions.getCol(), defaultElement);
 
         //create a vector of each column and call f on it
         const size_t numCols = dimensions.getCol();
         for (size_t col = firstIndex; col < numCols; ++col) {
-            answer[col] = getColAsVector(col).vecFunc(f);
+            Func g = f;
+            answer[col] = getColAsVector(col).vecFunc(g);
         };
 
         answer.transpose();

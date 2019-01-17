@@ -339,6 +339,9 @@ namespace MtmMath {
         T& operator*(){
             return (*self)[index];
         }
+        const T& operator*() const{
+            return (*self)[index];
+        }
         bool operator==(iterator iterator2){
             return index == iterator2.index;
         }
