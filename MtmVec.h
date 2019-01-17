@@ -24,7 +24,7 @@ namespace MtmMath {
         T *data;
         bool locked=false;
         size_t lockStartIndex = 0;
-        size_t lockEndIndex = size-1; //FIXME: Roi - what do we need to fix here?
+        size_t lockEndIndex = size-1;
     protected:
         bool is_column = true;
         size_t size;
@@ -191,7 +191,7 @@ namespace MtmMath {
 
         iterator end();
 
-        class nonzero_iterator : iterator {
+        class nonzero_iterator : public iterator {
         public:
             nonzero_iterator &operator++() override {
                 if (*this != this->self->end()) this->iterator::operator++();
@@ -201,23 +201,28 @@ namespace MtmMath {
                 return *this;
             }
 
-        private:
             friend nonzero_iterator MtmVec<T>::nzbegin();
 
             friend nonzero_iterator MtmVec<T>::nzend();
 
+        private:
             explicit nonzero_iterator(MtmVec *self, size_t startIndex) :
                     iterator(self, startIndex) {
-                if (this->operator*() == 0) ++(*this);
+                if (startIndex!=self->end().getIndex() && this->operator*() == 0){
+                    ++(*this);
+                }
             }
+
+            nonzero_iterator(const MtmVec<T>::iterator& original) :
+                nonzero_iterator(original.getSelf(), original.getIndex()){}
         };
 
         nonzero_iterator nzbegin() {
-            return nonzero_iterator(this, firstIndex);
+            return nonzero_iterator(begin());
         }
 
         nonzero_iterator nzend() {
-            return (nonzero_iterator) end();
+            return nonzero_iterator(end());
         }
 
         //DEBUG
@@ -303,7 +308,7 @@ namespace MtmMath {
     template <typename T>
     class MtmVec<T>::iterator{
     protected:
-        int index=0;
+        size_t index=0;
         MtmVec* self = NULL;
 
         iterator(MtmVec<T>* self, size_t startIndex=0) : self(self),
@@ -313,6 +318,14 @@ namespace MtmMath {
         friend iterator MtmVec::end();
 
     public:
+        size_t getIndex() const{
+            return index;
+        }
+
+        MtmVec* getSelf() const {
+            return self;
+        }
+
         T& operator*(){
             return (*self)[index];
         }

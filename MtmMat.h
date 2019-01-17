@@ -202,7 +202,7 @@ namespace MtmMath {
                                                      dimensions.getCol() - 1) + 1);
         }
 
-        class nonzero_iterator : iterator {
+        class nonzero_iterator : public iterator {
         public:
             nonzero_iterator &operator++() override {
                 if (*this != this->self->end()) iterator::operator++(*this);
@@ -212,11 +212,9 @@ namespace MtmMath {
             }
 
         private:
-            template<T>
-            friend nonzero_iterator nzbegin();
+            nonzero_iterator nzbegin();
 
-            template<T>
-            friend nonzero_iterator nzend();
+            nonzero_iterator nzend();
 
             explicit nonzero_iterator(MtmMat *self, size_t startIndex) :
                     iterator(self, startIndex) {
