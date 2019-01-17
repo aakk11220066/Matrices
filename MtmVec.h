@@ -157,15 +157,16 @@ namespace MtmMath {
             is_column = !is_column;
         }
 
-        virtual T &operator[](int index) { //code duplicated in const version!
-            if (index < 0 || index >= size || (locked &&
-                                               lockStartIndex>index && lockEndIndex<index)) {
+        virtual T &operator[](int index) {
+            if (index < 0 || index >= size
+                || (locked && (lockStartIndex>index || lockEndIndex<index))) {
+
                 throw MtmExceptions::AccessIllegalElement();
             }
             return data[index];
         }
 
-        virtual const T &operator[](int index) const {//code duplicated!
+        virtual const T &operator[](int index) const {
             if (index < 0 || index >= size) {
                 throw MtmExceptions::AccessIllegalElement();
             }

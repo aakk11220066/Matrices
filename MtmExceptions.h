@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include "Auxilaries.h"
+#include <string.h>
 
 using std::to_string;
 
@@ -13,12 +14,16 @@ namespace MtmMath {
         class MtmExceptions : public std::exception {
         protected:
             std::string description;
+            enum errorType {MISMATCH, MAT_FAIL, OTHER};
+            errorType error = OTHER;
         public:
             MtmExceptions(std::string description) : description(description){}
             const char* what() const noexcept {
                 return description.c_str();
             }
             virtual ~MtmExceptions() throw() {}
+
+            void reverseDescription();
         };
 
         /*
@@ -55,7 +60,9 @@ namespace MtmMath {
                             += (to_string(mat1Dimensions.getCol()) += ") (")
                             += (to_string(mat2Dimensions.getRow()) += ",")
                             += to_string(mat2Dimensions.getCol()) += ")"
-                            ) {}
+                            ) {
+                error = MISMATCH;
+            }
         };
 
         /*
@@ -69,10 +76,12 @@ namespace MtmMath {
                     Dimensions newMatDimensions) : MtmExceptions( std::string(
                     "MtmError: Change matrix shape failed from: (")
                     += (to_string(oldMatDimensions.getRow()) += ",")
-                    += (to_string(oldMatDimensions.getCol()) += ") (")
+                    += (to_string(oldMatDimensions.getCol()) += ") to (")
                     += (to_string(newMatDimensions.getRow()) += ",")
                     += (to_string(newMatDimensions.getCol()) += ")")
-                    ){}
+                    ) {
+                error = MAT_FAIL;
+            }
         };
 
         /*
@@ -84,6 +93,31 @@ namespace MtmMath {
             AccessIllegalElement() : MtmExceptions(
                     "MtmError: Attempt access to illegal element") {}
         };
+
+        void MtmExceptions::reverseDescription() {
+            std::string pieces[5];
+            if (error==OTHER) return;
+
+            //split string up into pieces
+            std::string toFlip = description;
+            pieces[0] = toFlip.substr(0, toFlip.find("(")+1);
+            toFlip = toFlip.substr(pieces[0].length());
+
+            pieces[1] = toFlip.substr(0, toFlip.find(")"));
+            toFlip = toFlip.substr(pieces[1].length());
+
+            pieces[2] = toFlip.substr(0, toFlip.find("(")+1);
+            toFlip = toFlip.substr(pieces[2].length());
+
+            pieces[3] = toFlip.substr(0, toFlip.find(")"));
+
+            pieces[4] = toFlip.substr(pieces[2].length());
+
+            //reverse order of parentheses
+            description = pieces[0] += pieces[3] += pieces[2]
+                += pieces[1] += pieces[4];
+
+        }
     }
 }
 

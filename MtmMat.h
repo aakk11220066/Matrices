@@ -74,8 +74,8 @@ namespace MtmMath {
          * row i of new matrix equals sum of scalar products of jth element of
          * row i of A * row j of B
          */
-                friend MtmMat<T> operator*(const MtmMat<T> &matrix1,
-                const MtmMat<T> &matrix2){
+        friend MtmMat<T> operator*(const MtmMat<T> &matrix1,
+            const MtmMat<T> &matrix2){
 
             const size_t n = matrix1.dimensions.getCol();
             if (n != matrix2.dimensions.getRow()) {
@@ -83,7 +83,6 @@ namespace MtmMath {
                                                        matrix2.dimensions);
             }
 
-            //mathematically proven to be equivalent to ordinary matrix multiplication
             const size_t numRows = matrix1.dimensions.getRow();
             const size_t numCols = matrix2.dimensions.getCol();
             MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
@@ -239,7 +238,7 @@ namespace MtmMath {
 
         void printMatrix(){
             cout << endl;
-            MtmMat<T>& mat = (*this);
+            const MtmMat<T>& mat = (*this);
             for (int i = 0; i <mat.getDimensions().getRow(); i++){
                 for (int j = 0; j<mat.getDimensions().getCol(); j++){
                     cout << mat[i][j] << " ";
@@ -258,7 +257,7 @@ namespace MtmMath {
         return MtmMat<T>(vector1) * matrix2;
     }
 
-    template<typename T>
+    template<typename T> //TODO: flip coordinates thrown in case of error (in all commutativeness functions like this)
     MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2)  {
         return MtmMat<T>(vector2) * matrix1;
     }
@@ -289,8 +288,8 @@ namespace MtmMath {
     //implementations begin here
 
     template<typename T>
-    bool operator!=(const typename MtmMat<T>::iterator &me,
-                    const typename MtmMat<T>::iterator &other) {
+    bool operator!=(typename MtmMat<T>::iterator me,
+                    typename MtmMat<T>::iterator other) {
         return !(me == other);
     }
 
@@ -322,7 +321,6 @@ namespace MtmMath {
             (original.getIsColumn()? 1 : original.getSize()),
             (original.getIsColumn()? original.getSize() : 1)),0) {
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol();
-        cout << rows << cols << endl;
         for (int i = firstIndex; i < ((original.getIsColumn()) ? cols :
         rows); ++i) {
             if (original.getIsColumn()) {

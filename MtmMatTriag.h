@@ -23,7 +23,7 @@ namespace MtmMath {
 
         //takes square matrix and zeroes out top/bottom triangle
         //also handles locking
-        void triangulate(MtmMatSq<T> target, bool makeUpper);
+        void triangulate(MtmMatSq<T>& target, bool makeUpper);
 
         bool upper = true;
 
@@ -99,7 +99,7 @@ namespace MtmMath {
     }
 
     template<typename T>
-    void MtmMatTriag<T>::triangulate(MtmMatSq<T> target, bool makeUpper) {
+    void MtmMatTriag<T>::triangulate(MtmMatSq<T>& target, bool makeUpper) {
         const size_t m = target.getDimensions().getRow();
         for (size_t row = 0; row < m; ++row) {
             target[row].setLock(false); //unlock row
@@ -113,7 +113,7 @@ namespace MtmMath {
                 target[row].setLockStartIndex(row);
             }
             else {
-                target[row].setLockEndIndex(m - row);
+                target[row].setLockEndIndex(row);
             }
             target[row].setLock(true); //lock row
         }
