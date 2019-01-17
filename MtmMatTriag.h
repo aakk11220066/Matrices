@@ -59,6 +59,8 @@ namespace MtmMath {
             MtmMatSq<T>::resize(dim, val);
             triangulate(*this, upper);
         }
+
+        //TODO: ensure operator+ returns MtmMat
     };
 
     //implementation begins here
@@ -85,7 +87,7 @@ namespace MtmMath {
 
     template<typename T>
     TriangleType MtmMatTriag<T>::isUpperOrLower(const MtmMatSq<T> &mat) const {
-        size_t m = mat.dimensions.getRow();
+        size_t m = mat.getDimensions().getRow();
         bool isUpper = true, isLower = true;
         for (int row = 0; row < m; ++row) {
             for (int col = 0; col < m; ++col) {

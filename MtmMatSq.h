@@ -24,8 +24,8 @@ namespace MtmMath {
 
         //constructor for building square matrix based on matrix that happens to have square dimensions
         MtmMatSq (const MtmMat<T>& original) : MtmMat<T>(original){
-            if (original.dimensions().getRow()
-                != original.dimensions().getCol()) {
+            if (original.getDimensions().getRow()
+                != original.getDimensions().getCol()) {
                 throw MtmExceptions::IllegalInitialization();
             }
         }

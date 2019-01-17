@@ -2,9 +2,10 @@
 
 #include "MtmVec.h"
 #include "MtmMat.h"
-//#include "MtmMatSq.h"
-//#include "MtmMatTriag.h"
+#include "MtmMatSq.h"
+#include "MtmMatTriag.h"
 #include "complex.h"
+#include "MtmMatSq.h"
 
 #include <assert.h>
 using namespace MtmMath;
@@ -103,78 +104,26 @@ assert(res[0]==2 and res[1]==3 and res[2]==6);*/
 
 int main() {
     try {
-        MtmVec<int> v1(4, 8);
-        v1[1]=7;
-        //v1.print_vec();
-        int num;
-        int i = 0;
-        /*
-        MtmVec<int>::iterator it =v1.begin();
-        for (;i<= 3;++it) {
-            num = *it;
-            i++;
-            cout << num << " " << i << endl;
+        MtmMat<int> m1(Dimensions(4,4), 6);
+        m1[1][0]=m1[2][0]=m1[2][1]=m1[3][0]=m1[3][1]=m1[3][2]=0;
+        MtmMatTriag<int> m1tri(m1);
+        cout<<"m1sq before resize = ";
+        m1tri.printMatrix();
+
+        m1tri.resize(Dimensions(6,6), 3);
+        cout<<"m1sq after resize to (6,6) = ";
+        m1tri.printMatrix();
+
+        m1tri.resize(Dimensions(3,3), 3);
+        cout<<"m1sq after resize to (3,3) = ";
+        m1tri.printMatrix();
+
+        try{
+            m1tri.resize(Dimensions(2,3), 99);
+            assert(false);
+        } catch(MtmExceptions::ChangeMatFail& e){
+            cout<<e.what()<<endl;
         }
-        if (it == v1.end()) cout << "alright" << endl;
-         */
-        //MtmVec<int> v2(4,7);
-        //MtmVec<int> v4 (2,6);
-        //MtmVec<int> v3 = v1 + v4;
-
-        int a =3, b=3, count = 0;
-        MtmMat<int> m1(Dimensions(a,b),5);
-
-        for (int j = 0; j <b; j++){
-            for (int i = 0; i<a; i++){
-                m1[i][j] = count;
-                count++;
-            }
-            cout << endl;
-        }
-
-        //m1.reshape(Dimensions (2,8));
-        MtmMat<int>::iterator it = m1.begin();
-        for (int i = 0; i < 20; i++, ++it) {
-            //num = *it;
-            //cout << num << "hello" << endl;
-        }
-        if (it==m1.end()) cout <<"works" << endl;
-        if (++(m1.end())==(m1.end())) cout << "works2" << endl;
-        m1.printMatrix();
-        cout << endl;
-        cout << endl;
-        cout << endl;
-        //MtmVec<int> v2 = 3* v1;
-
-        //MtmMat<int> m2 = v1*m1;
-        //m2.printMatrix();
-        //MtmMat<int> m2 = m1;
-        // MtmMat<int> m3 = m1*m2;
-/*
-        cout << endl;
-        for (int i = 0; i <b; i++){
-            for (int j = 0; j<a; j++){
-                cout << m2[i][j] << " ";
-            }
-            cout << endl;
-        }
-*/
-        //v2[2] = 3;
-        //v2[3] = 2;
-        //v1 = v2;
-        //v1.operator=(v2);
-        //v1.print_vec();
-        //MtmVec<int> v3 = v1 +v2+4;
-        //int g = *v2.data;
-        //int h = int(v2.lockEndIndex);
-        //v2.transpose();
-        //v2.print_vec();
-        //v2.resize(Dimensions(9,1), 6);
-        //v2.print_vec();
-        //v3.print_vec();
-
-        //cout << g << endl;
-        //cout << h << endl;
     }
     catch (MtmExceptions::IllegalInitialization& e){
         cout<< e.what() <<endl;

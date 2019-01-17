@@ -19,6 +19,8 @@ namespace MtmMath {
 
     template<typename T>
     class MtmVec {
+    protected:
+        size_t size;
     private:
         MtmVec *self;
         T *data;
@@ -27,7 +29,6 @@ namespace MtmMath {
         size_t lockEndIndex = size-1;
     protected:
         bool is_column = true;
-        size_t size;
     public:
         /*
          * Vector constructor, m is the number of elements in it and val is the initial value for the matrix elements

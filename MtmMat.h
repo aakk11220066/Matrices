@@ -214,11 +214,11 @@ namespace MtmMath {
                 }
             }
 
+            friend nonzero_iterator MtmMat<T>::nzbegin() ;
+
+            friend nonzero_iterator MtmMat<T>::nzend() ;
+
         private:
-            nonzero_iterator nzbegin();
-
-            nonzero_iterator nzend();
-
             explicit nonzero_iterator(MtmMat *self, size_t startIndex) :
                     iterator(self, startIndex) {
                 if (this->operator*() == 0) ++(*this);
@@ -243,7 +243,8 @@ namespace MtmMath {
             const MtmMat<T>& mat = (*this);
             for (int i = 0; i <mat.getDimensions().getRow(); i++){
                 for (int j = 0; j<mat.getDimensions().getCol(); j++){
-                    cout << mat[i][j] << " ";
+                    const T& toPrint = mat[i][j];
+                    cout << toPrint << " ";
                 }
                 cout << endl;
             }
@@ -388,8 +389,8 @@ namespace MtmMath {
         MtmMat<T> replacement(dim, val);
         for (int row = firstIndex; row < dimensions.getRow() && row < dim.getRow(); ++row) {
             for (int col = firstIndex; col < dimensions.getCol() && col < dim.getCol(); ++col) {
-                replacement[row][col] = (*this)[row][col];
-                assert(replacement[row][col] != errorValue); //DEBUG
+                const T& transferElement = (*this)[row][col];
+                replacement[row][col] = transferElement;
             }
         }
         (*this) = replacement;
@@ -397,7 +398,7 @@ namespace MtmMath {
 
     template<typename T>
     template<typename Func>
-    MtmVec<T> MtmMat<T>::matFunc(Func &f) const {
+    MtmVec<T> MtmMat<T>::matFunc(Func &f) const { //FIXME: make copies of f to run on each column
         //create vector to hold result
         MtmVec<T> answer(dimensions.getCol(), defaultElement);
 
