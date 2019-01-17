@@ -105,10 +105,20 @@ assert(res[0]==2 and res[1]==3 and res[2]==6);*/
 int main() {
     try {
         MtmMat<int> m1(Dimensions(4,4), 6);
-        for (int i=0; i<16; ++i);
-        MtmMatTriag<int> m1tri(m1);
-        cout<<"Matrix1 = ";
-        m1tri.printMatrix();
+        int runner=0;
+        for (int i=0; i<4; ++i){
+            for (int j=0; j<4; ++j){
+                m1[j][i] = runner++;
+            }
+        }
+        m1[3][3]=0;
+        cout<<"Matrix1 = "; //linear-index matrix
+        m1.printMatrix();
+        cout<<endl<<"Linear indexes of the matrix are: "<<endl;
+        for (MtmMatSq<int>::nonzero_iterator it=m1.nzbegin();it!=m1.nzend();++it) {
+            cout << *it << ", ";
+            cout.flush();
+        }
     }
     catch (MtmExceptions::IllegalInitialization& e){
         cout<< e.what() <<endl;

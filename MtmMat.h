@@ -30,16 +30,17 @@ namespace MtmMath {
         //  diagonal, which has 1s
         MtmMat<T> exchangeMatrix(size_t dimension) const;
 
-        //generates reference to element based on lniear index
+        //generates reference to element based on linear index
         T &linearIndexToReference(size_t linearIndex) {
             const size_t numRows = dimensions.getRow();
             const size_t row = linearIndex % numRows, col = linearIndex / numRows;
             return (*this)[row][col];
-        }
+        } //TODO: add const version and make iterators call it
 
         //calculates linear index of matrix coordinates
         size_t coordinatesToLinearIndex(size_t row, size_t col) {
-            return dimensions.getRow() * dimensions.getCol();
+            const size_t colIndex = (*this).getDimensions().getRow() * col;
+            return colIndex + row;
         }
 
     public:
@@ -208,9 +209,11 @@ namespace MtmMath {
         class nonzero_iterator : public iterator {
         public:
             nonzero_iterator &operator++() override {
-                if (*this != this->self->end()) iterator::operator++(*this);
+                if (*this != this->self->end()){
+                    this->iterator::operator++();
+                }
                 while (*this != this->self->end() && this->operator*() == 0) {
-                    iterator::operator++(*this);
+                    this->iterator::operator++();
                 }
             }
 
@@ -221,7 +224,8 @@ namespace MtmMath {
         private:
             explicit nonzero_iterator(MtmMat *self, size_t startIndex) :
                     iterator(self, startIndex) {
-                if (this->operator*() == 0) ++(*this);
+                if (startIndex != self->end().linearIndex
+                    && this->operator*() == 0) ++(*this);
             }
         };
 
