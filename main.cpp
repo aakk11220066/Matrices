@@ -105,20 +105,25 @@ int main() {
     try {
         MtmVec<int> v1(4, 8);
         v1[1]=7;
-        v1.print_vec();
+        //v1.print_vec();
         int num;
-        MtmVec<int>::nonzero_iterator it =v1.nzbegin();
-        for (MtmVec<int>::nonzero_iterator it =v1.nzbegin();it != v1.nzend
-        ();++it) {
+        int i = 0;
+        /*
+        MtmVec<int>::iterator it =v1.begin();
+        for (;i<= 3;++it) {
             num = *it;
-            cout << num << endl;
+            i++;
+            cout << num << " " << i << endl;
         }
+        if (it == v1.end()) cout << "alright" << endl;
+         */
         //MtmVec<int> v2(4,7);
         //MtmVec<int> v4 (2,6);
-       //MtmVec<int> v3 = v1 + v4;
-       /*
-        int a =4, b=4, count = 0;
+        //MtmVec<int> v3 = v1 + v4;
+
+        int a =3, b=3, count = 0;
         MtmMat<int> m1(Dimensions(a,b),5);
+
         for (int j = 0; j <b; j++){
             for (int i = 0; i<a; i++){
                 m1[i][j] = count;
@@ -126,7 +131,15 @@ int main() {
             }
             cout << endl;
         }
-        m1.reshape(Dimensions (2,8));
+
+        //m1.reshape(Dimensions (2,8));
+        MtmMat<int>::iterator it = m1.begin();
+        for (int i = 0; i < 20; i++, ++it) {
+            //num = *it;
+            //cout << num << "hello" << endl;
+        }
+        if (it==m1.end()) cout <<"works" << endl;
+        if (++(m1.end())==(m1.end())) cout << "works2" << endl;
         m1.printMatrix();
         cout << endl;
         cout << endl;
@@ -136,8 +149,7 @@ int main() {
         //MtmMat<int> m2 = v1*m1;
         //m2.printMatrix();
         //MtmMat<int> m2 = m1;
-       // MtmMat<int> m3 = m1*m2;
-        */
+        // MtmMat<int> m3 = m1*m2;
 /*
         cout << endl;
         for (int i = 0; i <b; i++){
@@ -171,5 +183,3 @@ int main() {
         cout<< e.what() <<endl;
     }
 }
-
-

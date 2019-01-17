@@ -165,6 +165,8 @@ namespace MtmMath {
             size_t linearIndex;
 
         private:
+            friend class MtmMat<T>;
+
             template<T>
             friend iterator begin();
 
@@ -189,6 +191,7 @@ namespace MtmMath {
 
             virtual iterator &operator++() {
                 if (*this != self->end()) ++linearIndex;
+                return *this;
             }
         };
 
