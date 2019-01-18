@@ -47,7 +47,7 @@ namespace MtmMath {
             }
 
             is_column = original.is_column;
-            for (int i = firstIndex; i < original.size; ++i) {
+            for (size_t i = firstIndex; i < original.size; ++i) {
                 (*this)[i] = original[i];
             }
 
@@ -67,7 +67,7 @@ namespace MtmMath {
                 throw MtmExceptions::OutOfMemory();
             }
             is_column = original.is_column;
-            for (int i = firstIndex; i < original.size; ++i) {
+            for (size_t i = firstIndex; i < original.size; ++i) {
                 (*this)[i] = original[i];
             }
 
@@ -80,8 +80,9 @@ namespace MtmMath {
 
         //print vec DEBUG
         void print_vec(){
-            for (int i = 0; i< int(size); ++i){
-                cout << (*this)[i] << " ";
+        for (size_t i = 0; i< size ; ++i){
+            cout << (*this)[i] << " ";
+            if (is_column) cout<<endl;
         }
         cout << endl;
         }
@@ -93,7 +94,7 @@ namespace MtmMath {
         virtual MtmVec<T> operator+(const T &scalar) const {
             MtmVec<T> answer(*this);
             answer.setLock(false);
-            for (int i = firstIndex; i < size; ++i) {
+            for (size_t i = firstIndex; i < size; ++i) {
                 answer[i] = (*this)[i] + scalar;
             }
             return answer;
@@ -113,10 +114,11 @@ namespace MtmMath {
          */
         template<typename Func>
         T vecFunc(Func &f) const {
-            for (int i = firstIndex; i < size; i++) {
-                f((*this)[i]);
+            Func g = f;
+            for (size_t i = firstIndex; i < size; i++) {
+                g((*this)[i]);
             }
-            return *f;
+            return *g;
         }
 
         /*
@@ -145,7 +147,7 @@ namespace MtmMath {
             } catch (std::bad_alloc) {
                 throw MtmExceptions::OutOfMemory();
             }
-            int i;
+            size_t i;
             for (i = 0; i < newSize && i < size; ++i) {
                 newData[i] = data[i];
             }
@@ -164,7 +166,7 @@ namespace MtmMath {
             is_column = !is_column;
         }
 
-        virtual T &operator[](int index) {
+        virtual T &operator[](size_t index) {
             if (index < 0 || index >= size
                 || (locked && (lockStartIndex>index || lockEndIndex<index))) {
 
@@ -173,7 +175,7 @@ namespace MtmMath {
             return data[index];
         }
 
-        virtual const T &operator[](int index) const {
+        virtual const T &operator[](size_t index) const {
             if (index < 0 || index >= size) {
                 throw MtmExceptions::AccessIllegalElement();
             }
@@ -184,11 +186,11 @@ namespace MtmMath {
             return locked = status;
         }
 
-        int setLockStartIndex(int index) {
+        size_t setLockStartIndex(size_t index) {
             return lockStartIndex = index;
         }
 
-        int setLockEndIndex(int index) {
+        size_t setLockEndIndex(size_t index) {
             return lockEndIndex = index;
         }
 
@@ -271,7 +273,7 @@ namespace MtmMath {
         }
         MtmVec<T> answer(*this);
         answer.setLock(false);
-        for (int i = firstIndex; i < size; ++i) answer[i] = (*this)[i] + other[i];
+        for (size_t i = firstIndex; i < size; ++i) answer[i] = (*this)[i] + other[i];
         return answer;
     }
 
@@ -290,7 +292,7 @@ namespace MtmMath {
         MtmVec<T> answer(*this);
         bool wasLocked = locked;
         answer.setLock(false);
-        for (int i = firstIndex; i < size; ++i) {
+        for (size_t i = firstIndex; i < size; ++i) {
             answer[i] = answer[i] * scalar;
         }
         answer.setLock(wasLocked);
@@ -307,6 +309,21 @@ namespace MtmMath {
         }
     }
 
+    template <typename T>
+    MtmVec<T> operator-(const T& scalar, const MtmVec<T> vector) {
+        return scalar + -vector;
+    }
+
+    template <typename T>
+    MtmVec<T> operator-(const MtmVec<T> vector, const T& scalar){
+        return vector + -scalar;
+    }
+
+    template <typename T>
+    MtmVec<T> operator-(const MtmVec<T> vector1, const MtmVec<T> vector2){
+        return vector1 + -vector2;
+    }
+
     template<typename T>
     MtmVec<T>::MtmVec(size_t m, const T &val) : size(m) {
         if (m <= 0) throw MtmExceptions::IllegalInitialization();
@@ -316,7 +333,7 @@ namespace MtmMath {
             throw MtmExceptions::OutOfMemory();
         }
 
-        for (int i = firstIndex; i < size; i++) {
+        for (size_t i = firstIndex; i < size; i++) {
             data[i] = val;
         }
     }

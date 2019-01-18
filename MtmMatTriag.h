@@ -87,8 +87,8 @@ namespace MtmMath {
     TriangleType MtmMatTriag<T>::isUpperOrLower(const MtmMatSq<T> &mat) const {
         size_t m = mat.getDimensions().getRow();
         bool isUpper = true, isLower = true;
-        for (int row = 0; row < m; ++row) {
-            for (int col = 0; col < m; ++col) {
+        for (size_t row = 0; row < m; ++row) {
+            for (size_t col = 0; col < m; ++col) {
                 //found nonzero beneath (next line: above) diagonal
                 if (row > col && mat[row][col] != 0) isUpper = false;
                 if (row < col && mat[row][col] != 0) isLower = false;
@@ -103,7 +103,7 @@ namespace MtmMath {
         const size_t m = target.getDimensions().getRow();
         for (size_t row = 0; row < m; ++row) {
             target[row].setLock(false); //unlock row
-            for (int col = 0; col < m; ++col) {
+            for (size_t col = 0; col < m; ++col) {
                 if ((row > col && makeUpper) || (row < col && !makeUpper)) {
                     target[row][col] = 0;
                 }

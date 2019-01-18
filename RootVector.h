@@ -43,7 +43,7 @@ namespace MtmMath {
         virtual const MtmVec<T>& operator[](size_t index) const;
 
         void setLock(bool newStatus){
-            for (int i=0; i<size; i++){
+            for (size_t i=0; i<size; i++){
                 (*this)[i].MtmVec<T>::setLock(newStatus);
             }
         }
@@ -62,7 +62,7 @@ namespace MtmMath {
     RootVector<T>::RootVector(const MtmMath::RootVector<T> &original) :
         RootVector(original.size, MtmVec<T>()){
 
-        for (int i=0; i<size; ++i){
+        for (size_t i=0; i<size; ++i){
             (*this)[i] = original[i];
         }
     }

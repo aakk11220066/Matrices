@@ -25,20 +25,20 @@ namespace MtmMath {
         //generates vector copy of some column of matrix
         const MtmVec<T> getColAsVector(size_t col) const;
     private:
-        //generates a square matrix full of zeroes except for the secondary
-        //  diagonal, which has 1s
-        MtmMat<T> exchangeMatrix(size_t dimension) const;
-
         //generates reference to element based on linear index
         T &linearIndexToReference(size_t linearIndex) {
             const size_t numRows = dimensions.getRow();
             const size_t row = linearIndex % numRows, col = linearIndex / numRows;
             return (*this)[row][col];
-        } //TODO: add const version and make iterators call it
+        }
 
         const T& linearIndexToReference(size_t linearIndex) const {
-            return const_cast<const T&>(const_cast<T&>(this)->
-                linearIndexToReference(linearIndex));
+            //return const_cast<const T&>(const_cast< MtmMat<T>* >(this)->
+            //    linearIndexToReference(linearIndex));
+            const size_t numRows = dimensions.getRow();
+            const size_t row = linearIndex % numRows, col = linearIndex/numRows;
+            const auto* const_this = this;
+            return (*const_this)[row][col];
         }
 
         //calculates linear index of matrix coordinates
@@ -58,7 +58,7 @@ namespace MtmMath {
         MtmMat<T>(const MtmMat<T> &original) = default;
 
         //vector-to-matrix constructor
-        MtmMat<T>(const MtmVec<T> &original);
+        explicit MtmMat<T>(const MtmVec<T> &original);
 
         //assignment
         virtual MtmMat<T> &operator=(const MtmMat &original){
@@ -91,9 +91,9 @@ namespace MtmMath {
             const size_t numRows = matrix1.dimensions.getRow();
             const size_t numCols = matrix2.dimensions.getCol();
             MtmMat<T> answer(Dimensions(numRows, numCols), defaultElement);
-            for (int i = firstIndex; i < numRows; ++i) {
-                for (int j = firstIndex; j < numCols; ++j) {
-                    for (int runner = firstIndex; runner < n; ++runner) {
+            for (size_t i = firstIndex; i < numRows; ++i) {
+                for (size_t j = firstIndex; j < numCols; ++j) {
+                    for (size_t runner = firstIndex; runner < n; ++runner) {
                         answer[i][j] += matrix1[i][runner] *
                                         matrix2[runner][j];
                     }
@@ -117,7 +117,6 @@ namespace MtmMath {
                                    const MtmMat<T> &matrix2){
 
             const size_t numRows = matrix1.dimensions.getRow();
-            const size_t numCols = matrix1.dimensions.getCol();
             if (matrix2.dimensions != matrix1.dimensions) {
                 throw MtmExceptions::DimensionMismatch(matrix1.dimensions,
                                                        matrix2.dimensions);
@@ -125,7 +124,7 @@ namespace MtmMath {
 
             MtmMat<T> answer(matrix1);
             answer.setLock(false);
-            for (int row = firstIndex; row < numRows; ++row) {
+            for (size_t row = firstIndex; row < numRows; ++row) {
                 answer[row] = matrix1[row] + matrix2[row]; //vector addition
             }
             return answer;
@@ -139,6 +138,10 @@ namespace MtmMath {
                 answer[row] = (*this)[row] + scalar;
             }
             return answer;
+        }
+
+        MtmMat<T> operator-() const{
+            return (-1)*(*this);
         }
 
         /*
@@ -190,7 +193,8 @@ namespace MtmMath {
             }
 
             const T& operator*() const {
-                return self->linearIndexToReference(linearIndex);
+                const auto* const_self = self;
+                return const_self->linearIndexToReference(linearIndex);
             }
 
             bool operator==(const iterator &other){
@@ -212,9 +216,8 @@ namespace MtmMath {
         }
 
         iterator end() {
-            return iterator(this,
-                            coordinatesToLinearIndex(dimensions.getRow() - 1,
-                                                     dimensions.getCol() - 1) + 1);
+            return iterator(this,coordinatesToLinearIndex(dimensions.getRow()-1,
+                dimensions.getCol() - 1) + 1);
         }
 
         class nonzero_iterator : public iterator {
@@ -223,7 +226,8 @@ namespace MtmMath {
                 if (*this != this->self->end()){
                     this->iterator::operator++();
                 }
-                while (*this != this->self->end() && this->operator*() == 0) {
+                const auto* const_this = this;
+                while (*this!=this->self->end() && const_this->operator*()==0){
                     this->iterator::operator++();
                 }
                 return *this;
@@ -257,8 +261,8 @@ namespace MtmMath {
         void printMatrix(){
             cout << endl;
             const MtmMat<T>& mat = (*this);
-            for (int i = 0; i <mat.getDimensions().getRow(); i++){
-                for (int j = 0; j<mat.getDimensions().getCol(); j++){
+            for (size_t i = 0; i <mat.getDimensions().getRow(); i++){
+                for (size_t j = 0; j<mat.getDimensions().getCol(); j++){
                     const T& toPrint = mat[i][j];
                     cout << toPrint << " ";
                 }
@@ -276,14 +280,9 @@ namespace MtmMath {
         return MtmMat<T>(vector1) * matrix2;
     }
 
-    template<typename T> //REVERSAL - treated
-    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2)  {
-        try {
-            return MtmMat<T>(vector2) * matrix1;
-        } catch (MtmExceptions::MtmExceptions& e){
-            e.reverseDescription();
-            throwError(e);
-        }
+    template<typename T>
+    MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2) {
+        return matrix1 * MtmMat<T>(vector2);
     }
 
     template <typename T> //REVERSAL - treated
@@ -322,17 +321,39 @@ namespace MtmMath {
             e.reverseDescription();
             throwError(e);
         }
+        return matrix; //THIS LINE SHOULD NEVER BE REACHED!!!
     }
 
+    template <typename T>
+    MtmMat<T> operator-(const T& scalar, const MtmMat<T>& matrix){
+        return scalar + -matrix;
+    }
+    template <typename T>
+    MtmMat<T> operator-(const MtmMat<T>& matrix, const T& scalar) {
+        return matrix + -scalar;
+    }
+    template <typename T>
+    MtmMat<T> operator-(const MtmMat<T>& matrix, const MtmVec<T>& vector) {
+        return matrix + -vector;
+    }
+    template <typename T>
+    MtmMat<T> operator-(const MtmVec<T>& vector, const MtmMat<T>& matrix) {
+        return vector + -matrix;
+    }
+    template <typename T>
+    MtmMat<T> operator-(const MtmMat<T>& matrix1, const MtmMat<T>& matrix2) {
+        return matrix1 + -matrix2;
+    }
 
 
     //implementations begin here
     template<typename T>
-    MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) : dimensions(dim_t),
-                                                        RootVector<T>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)) {
+    MtmMat<T>::MtmMat(Dimensions dim_t, const T &val) :
+        RootVector<T>(dim_t.getRow(), MtmVec<T>(dim_t.getCol(), val)),
+        dimensions(dim_t) {
 
         //make sub-vectors horizontal
-        for (int row = firstIndex; row < dim_t.getRow(); ++row) {
+        for (size_t row = firstIndex; row < dim_t.getRow(); ++row) {
             (*this)[row].transpose(); //MtmVec transpose
         }
     }
@@ -346,12 +367,12 @@ namespace MtmMath {
 
     template<typename T>
     MtmMat<T>::MtmMat(const MtmVec<T> &original) : MtmMat<T>(Dimensions(
-            (original.getIsColumn()? 1 : original.getSize()),
-            (original.getIsColumn()? original.getSize() : 1)),0) {
+            (!original.getIsColumn()? 1 : original.getSize()),
+            (!original.getIsColumn()? original.getSize() : 1)),0) {
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol();
-        for (int i = firstIndex; i < ((original.getIsColumn()) ? cols :
+        for (size_t i = firstIndex; i < ((!original.getIsColumn()) ? cols :
                                       rows); ++i) {
-            if (original.getIsColumn()) {
+            if (!original.getIsColumn()) {
                 (*this)[firstIndex][i] = original[i];
             } else {
                 (*this)[i][firstIndex] = original[i];
@@ -362,16 +383,7 @@ namespace MtmMath {
     template<typename T>
     MtmMat<T> operator*(const MtmVec<T> &vector1, const MtmVec<T> &vector2) {
         return MtmMat<T>(vector1) * MtmMat<T>(vector2);
-    }
-
-    template<typename T>
-    MtmMat<T> MtmMat<T>::exchangeMatrix(size_t dimension) const {
-        MtmMat<T> answer(Dimensions(dimension, dimension), defaultElement);
-        for (int i = firstIndex; i < dimension; i++) {
-            answer[dimension - i - 1][i] = 1;
-        }
-        return answer;
-    }
+    } //TODO: what if mathematically undefined - such as column*row, column*column, row*row?
 
     template<typename T>
     void MtmMat<T>::transpose() {
@@ -382,8 +394,8 @@ namespace MtmMath {
                 maxDim = (rows > cols) ? rows : cols;
         resize(Dimensions(maxDim, maxDim), defaultElement); //make matrix square
 
-        for (int i=firstIndex; i<maxDim; ++i){
-            for (int j=i; j<maxDim; j++){
+        for (size_t i = firstIndex; i<maxDim; ++i){
+            for (size_t j=i; j<maxDim; j++){
                 swap((*this)[i][j], (*this)[j][i]);
             }
         }
@@ -397,8 +409,6 @@ namespace MtmMath {
         // additional properties of subclasses
 
         const size_t numRows = newDim.getRow(), numCols = newDim.getCol();
-        const size_t maxIndex =
-                MtmMat<T>::coordinatesToLinearIndex(numRows - 1, numCols - 1);
         //sanitize inputs
         if ((newDim.getRow() <= firstIndex || newDim.getCol() <= firstIndex)
             ||(dimensions.getCol() * dimensions.getRow() != numRows * numCols)){
@@ -407,9 +417,10 @@ namespace MtmMath {
         }
 
         MtmMat<T> replacement(newDim, defaultElement);
-        for (size_t index = firstIndex; index < maxIndex; ++index) {
-            replacement.linearIndexToReference(index) =
-                    linearIndexToReference(index);
+        iterator iter = begin();
+        for (T& elem : replacement){
+            elem = *iter;
+            ++iter;
         }
 
         *this = replacement;
@@ -424,8 +435,8 @@ namespace MtmMath {
         }
 
         MtmMat<T> replacement(dim, val);
-        for (int row = firstIndex; row < dimensions.getRow() && row < dim.getRow(); ++row) {
-            for (int col = firstIndex; col < dimensions.getCol() && col < dim.getCol(); ++col) {
+        for (size_t row = firstIndex; row < dimensions.getRow() && row < dim.getRow(); ++row) {
+            for (size_t col = firstIndex; col < dimensions.getCol() && col < dim.getCol(); ++col) {
                 const auto* const_this = this;
                 const T& transferElement = (*const_this)[row][col];
                 replacement[row][col] = transferElement;
@@ -445,8 +456,7 @@ namespace MtmMath {
         //create a vector of each column and call f on it
         const size_t numCols = dimensions.getCol();
         for (size_t col = firstIndex; col < numCols; ++col) {
-            Func g = f;
-            answer[col] = getColAsVector(col).vecFunc(g);
+            answer[col] = getColAsVector(col).vecFunc(f);
         };
 
         answer.transpose();
@@ -456,7 +466,7 @@ namespace MtmMath {
     template<typename T>
     const MtmVec<T> MtmMat<T>::getColAsVector(size_t col) const {
         MtmVec<T> answer(dimensions.getRow(), defaultElement);
-        for (int row = firstIndex; row < dimensions.getRow(); ++row) {
+        for (size_t row = firstIndex; row < dimensions.getRow(); ++row) {
             const T& cell = (*this)[row][col];
             answer[row] = cell;
         }

@@ -45,7 +45,9 @@ namespace MtmMath {
 
     MtmMath::Complex operator*(const Complex &a, const Complex &b);
 
-    MtmMath::Complex operator-(const Complex &a, const Complex &b);
+    MtmMath::Complex operator-(const Complex &a, const Complex &b){
+        return a + -b;
+    }
 
 
     MtmMath::Complex &Complex::operator+=(const Complex &c) {
