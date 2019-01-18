@@ -11,13 +11,16 @@ using std::to_string;
 
 namespace MtmMath {
     namespace MtmExceptions {
+        enum errorType {MISMATCH, MAT_FAIL, ILLEGAL_INIT, OUT_MEM, ACCESS};
+
         class MtmExceptions : public std::exception {
         protected:
             std::string description;
-            enum errorType {MISMATCH, MAT_FAIL, OTHER};
-            errorType error = OTHER;
         public:
-            MtmExceptions(std::string description) : description(description){}
+            errorType error;
+
+            MtmExceptions(std::string description, errorType error)
+                : description(description), error(error){}
             const char* what() const noexcept {
                 return description.c_str();
             }
@@ -33,7 +36,8 @@ namespace MtmMath {
         class IllegalInitialization : public MtmExceptions {
         public:
             IllegalInitialization()
-                : MtmExceptions("MtmError: Illegal initialization values"){}
+                : MtmExceptions("MtmError: Illegal initialization values",
+                        ILLEGAL_INIT){}
         };
 
         /*
@@ -43,7 +47,7 @@ namespace MtmMath {
         class OutOfMemory : public MtmExceptions {
         public:
             OutOfMemory()
-                    : MtmExceptions("MtmError: Out of memory"){}
+                    : MtmExceptions("MtmError: Out of memory", OUT_MEM){}
         };
 
         /*
@@ -60,9 +64,7 @@ namespace MtmMath {
                             += (to_string(mat1Dimensions.getCol()) += ") (")
                             += (to_string(mat2Dimensions.getRow()) += ",")
                             += to_string(mat2Dimensions.getCol()) += ")"
-                            ) {
-                error = MISMATCH;
-            }
+                            , MISMATCH) {}
         };
 
         /*
@@ -79,9 +81,7 @@ namespace MtmMath {
                     += (to_string(oldMatDimensions.getCol()) += ") to (")
                     += (to_string(newMatDimensions.getRow()) += ",")
                     += (to_string(newMatDimensions.getCol()) += ")")
-                    ) {
-                error = MAT_FAIL;
-            }
+                    , MAT_FAIL) {}
         };
 
         /*
@@ -91,12 +91,27 @@ namespace MtmMath {
         class AccessIllegalElement : public MtmExceptions {
         public:
             AccessIllegalElement() : MtmExceptions(
-                    "MtmError: Attempt access to illegal element") {}
+                    "MtmError: Attempt access to illegal element", ACCESS) {}
         };
+
+        void throwError(MtmExceptions& e){
+            switch (e.error){
+                case ILLEGAL_INIT:
+                    throw dynamic_cast<IllegalInitialization&>(e);
+                case OUT_MEM:
+                    throw dynamic_cast<OutOfMemory&>(e);
+                case MISMATCH:
+                    throw dynamic_cast<DimensionMismatch&>(e);
+                case MAT_FAIL:
+                    throw dynamic_cast<ChangeMatFail&>(e);
+                case ACCESS:
+                    throw dynamic_cast<AccessIllegalElement&>(e);
+            }
+        }
 
         void MtmExceptions::reverseDescription() {
             std::string pieces[5];
-            if (error==OTHER) return;
+            if (error!=MISMATCH && error!=MAT_FAIL) return;
 
             //split string up into pieces
             std::string toFlip = description;

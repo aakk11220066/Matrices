@@ -92,6 +92,7 @@ namespace MtmMath {
         //Scalar addition
         virtual MtmVec<T> operator+(const T &scalar) const {
             MtmVec<T> answer(*this);
+            answer.setLock(false);
             for (int i = firstIndex; i < size; ++i) {
                 answer[i] = (*this)[i] + scalar;
             }
@@ -274,9 +275,14 @@ namespace MtmMath {
         return answer;
     }
 
-    template<typename T>
+    template<typename T>  //REVERSAL - treated
     MtmVec<T> operator+(const T &scalar, const MtmVec<T> vector) {
-        return vector + scalar;
+        try {
+            return vector + scalar;
+        } catch (MtmExceptions::MtmExceptions& e){
+            e.reverseDescription();
+            throwError(e);
+        }
     }
 
     template<typename T>
@@ -291,9 +297,14 @@ namespace MtmMath {
         return answer;
     }
 
-    template<typename T>
+    template<typename T> //REVERSAL - treated
     MtmVec<T> operator*(const T &scalar, const MtmVec<T> vector) {
-        return vector * scalar;
+        try {
+            return vector * scalar;
+        } catch (MtmExceptions::MtmExceptions& e){
+            e.reverseDescription();
+            throwError(e);
+        }
     }
 
     template<typename T>

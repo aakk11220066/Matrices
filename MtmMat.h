@@ -13,7 +13,6 @@ using std::size_t;
 
 namespace MtmMath {
     const size_t defaultElement = 0, firstIndex = 0, errorValue = 8998;
-
     //forward declarations
     template <typename T>
     class MtmMat;
@@ -106,6 +105,7 @@ namespace MtmMath {
         //scalar multiplication
         MtmMat<T> operator*(const T& scalar) const {
             MtmMat<T> answer(*this);
+            answer.setLock(false);
             for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
                 answer[row] = (*this)[row] * scalar;
             }
@@ -226,6 +226,7 @@ namespace MtmMath {
                 while (*this != this->self->end() && this->operator*() == 0) {
                     this->iterator::operator++();
                 }
+                return *this;
             }
 
             friend nonzero_iterator MtmMat<T>::nzbegin() ;
@@ -275,14 +276,25 @@ namespace MtmMath {
         return MtmMat<T>(vector1) * matrix2;
     }
 
-    template<typename T> //TODO: flip coordinates thrown in case of error (in all commutativeness functions like this)
+    template<typename T> //REVERSAL - treated
     MtmMat<T> operator*(const MtmMat<T> &matrix1, const MtmVec<T> &vector2)  {
-        return MtmMat<T>(vector2) * matrix1;
+        try {
+            return MtmMat<T>(vector2) * matrix1;
+        } catch (MtmExceptions::MtmExceptions& e){
+            e.reverseDescription();
+            throwError(e);
+        }
     }
 
-    template <typename T>
+    template <typename T> //REVERSAL - treated
     MtmMat<T> operator*(const T &scalar, const MtmMat<T> &matrix)  {
-        return matrix*scalar;
+        try {
+            return matrix * scalar;
+        }  catch (MtmExceptions::MtmExceptions& e){
+            e.reverseDescription();
+            throwError(e);
+        }
+
     }
 
     //matrix-vector addition (promotion on hold because class is generic)
@@ -291,14 +303,25 @@ namespace MtmMath {
         return MtmMat<T>(vector1)+matrix2;
     }
 
-    template <typename T>
+    template <typename T> //REVERSAL - treated
     MtmMat<T> operator+(const MtmMat<T>& matrix1, const MtmVec<T>& vector2) {
-        return vector2+matrix1;
+        try{
+            return vector2+matrix1;
+        } catch (MtmExceptions::MtmExceptions& e){
+            e.reverseDescription();
+            throwError(e);
+        }
+        return matrix1; //THIS LINE SHOULD NEVER BE REACHED!!!
     }
 
-    template <typename T>
+    template <typename T> //REVERSAL - treated
     MtmMat<T> operator+(const T &scalar, const MtmMat<T> &matrix)  {
-        return matrix+scalar;
+        try {
+            return matrix + scalar;
+        }  catch (MtmExceptions::MtmExceptions& e){
+            e.reverseDescription();
+            throwError(e);
+        }
     }
 
 
