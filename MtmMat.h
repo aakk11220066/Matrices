@@ -12,10 +12,6 @@
 using std::size_t;
 
 namespace MtmMath {
-    const size_t defaultElement = 0, firstIndex = 0, errorValue = 8998;
-    //forward declarations
-    template <typename T>
-    class MtmMat;
 
     template<typename T>
     class MtmMat : public RootVector<T> {
@@ -28,7 +24,7 @@ namespace MtmMath {
         //generates reference to element based on linear index
         T &linearIndexToReference(size_t linearIndex) {
             const size_t numRows = dimensions.getRow();
-            const size_t row = linearIndex % numRows, col = linearIndex / numRows;
+            const size_t row = linearIndex % numRows, col=linearIndex / numRows;
             return (*this)[row][col];
         }
 
@@ -258,17 +254,6 @@ namespace MtmMath {
             return dimensions;
         }
 
-        void printMatrix(){
-            cout << endl;
-            const MtmMat<T>& mat = (*this);
-            for (size_t i = 0; i <mat.getDimensions().getRow(); i++){
-                for (size_t j = 0; j<mat.getDimensions().getCol(); j++){
-                    const T& toPrint = mat[i][j];
-                    cout << toPrint << " ";
-                }
-                cout << endl;
-            }
-        } //DEBUG
     };
 
     //matrix-vector multiplication (promotion on hold because class is generic)
@@ -383,7 +368,7 @@ namespace MtmMath {
     template<typename T>
     MtmMat<T> operator*(const MtmVec<T> &vector1, const MtmVec<T> &vector2) {
         return MtmMat<T>(vector1) * MtmMat<T>(vector2);
-    } //TODO: what if mathematically undefined - such as column*row, column*column, row*row?
+    }
 
     template<typename T>
     void MtmMat<T>::transpose() {
@@ -430,13 +415,19 @@ namespace MtmMath {
     void MtmMat<T>::resize(Dimensions dim, const T &val) {
         //POTENTIAL ERROR: replacing matrix (rather than modifying) may reset
         // additional properties of subclasses
-        if (dimensions.getRow() <= firstIndex || dimensions.getCol() <= firstIndex) {
+        if (dimensions.getRow() <= firstIndex
+            || dimensions.getCol() <= firstIndex) {
+
             throw MtmExceptions::ChangeMatFail(dimensions, dim);
         }
 
         MtmMat<T> replacement(dim, val);
-        for (size_t row = firstIndex; row < dimensions.getRow() && row < dim.getRow(); ++row) {
-            for (size_t col = firstIndex; col < dimensions.getCol() && col < dim.getCol(); ++col) {
+        for (size_t row = firstIndex; row < dimensions.getRow()
+            && row < dim.getRow(); ++row) {
+
+            for (size_t col = firstIndex; col < dimensions.getCol()
+                && col < dim.getCol(); ++col) {
+
                 const auto* const_this = this;
                 const T& transferElement = (*const_this)[row][col];
                 replacement[row][col] = transferElement;

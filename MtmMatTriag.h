@@ -30,8 +30,10 @@ namespace MtmMath {
     public:
 
         /*
-         * Triangular Matrix constructor, m is the number of rows and columns in the matrix,
-         * val is the initial value for the matrix elements and isUpper_ is whether it is upper
+         * Triangular Matrix constructor, m is the number of rows and columns
+         * in the matrix,
+         * val is the initial value for the matrix elements and isUpper_ is
+         * whether it is upper
          * Rectangular matrix (true means it is)
          */
         MtmMatTriag<T>(size_t m, const T &val = T(), bool isUpper_t = true);
@@ -77,7 +79,7 @@ namespace MtmMath {
             MtmMatSq<T>(original) {
 
         TriangleType triangleType = isUpperOrLower(original);
-        if (triangleType == NEITHER) throw MtmExceptions::IllegalInitialization();
+        if (triangleType==NEITHER) throw MtmExceptions::IllegalInitialization();
         upper = (triangleType == UPPER);
 
         triangulate(*this, upper);

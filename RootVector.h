@@ -6,17 +6,10 @@
 #include "Auxilaries.h"
 #include "complex.h"
 
-//DEBUG
-#include <iostream>
-#include <string>
 
 #include "MtmVec.h"
 #include <vector>
-using std::cout; //DEBUG
-using std::endl; //DEBUG
 using std::size_t;
-#define firstIndex 0 //DEBUG
-#define defaultElement 0 //DEBUG
 
 namespace MtmMath {
     template <typename T> //describes a vector of vectors
@@ -79,7 +72,4 @@ namespace MtmMath {
         return vectors.at(index);
     }
 }
-
-#undef firstIndex //DEBUG
-#undef defaultElement //DEBUG
 #endif //MATRICES_ROOTVECTOR_H

@@ -14,7 +14,8 @@ namespace MtmMath {
     class MtmMatSq : public MtmMat<T> {
     public:
         /*
-         * Rectangular Matrix constructor, m is the number of rows and columns in the matrix
+         * Rectangular Matrix constructor, m is the number of rows and columns
+         * in the matrix
          * and val is the initial value for the matrix elements
          */
         MtmMatSq (size_t m, const T& val=T()):MtmMat<T>(Dimensions(m,m), val){}
@@ -22,7 +23,8 @@ namespace MtmMath {
         //copy constructor
         MtmMatSq (const MtmMatSq& original) = default;
 
-        //constructor for building square matrix based on matrix that happens to have square dimensions
+        //constructor for building square matrix based on matrix that happens
+        // to have square dimensions
         MtmMatSq (const MtmMat<T>& original) : MtmMat<T>(original){
             if (original.getDimensions().getRow()
                 != original.getDimensions().getCol()) {

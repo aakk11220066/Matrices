@@ -6,16 +6,10 @@
 #include "Auxilaries.h"
 #include "complex.h"
 
-//DEBUG
-#include <iostream>
-#include <string>
-using std::cout; //DEBUG
-using std::endl; //DEBUG
 using std::size_t;
-#define firstIndex 0 //DEBUG
-#define defaultElement 0 //DEBUG
 
 namespace MtmMath {
+    const size_t defaultElement = 0, firstIndex = 0, errorValue = 8998;
 
     template<typename T>
     class MtmVec {
@@ -31,7 +25,8 @@ namespace MtmMath {
         bool is_column = true;
     public:
         /*
-         * Vector constructor, m is the number of elements in it and val is the initial value for the matrix elements
+         * Vector constructor, m is the number of elements in it and val is the
+         * initial value for the matrix elements
          */
         explicit MtmVec(size_t m = 1, const T &val = T());
 
@@ -79,14 +74,6 @@ namespace MtmMath {
             return *this;
         }
 
-        //print vec DEBUG
-        void print_vec(){
-        for (size_t i = 0; i< size ; ++i){
-            cout << (*this)[i] << " ";
-            if (is_column) cout<<endl;
-        }
-        cout << endl;
-        }
 
         //Scalar multiplication (returns new vector)
         virtual MtmVec<T> operator*(const T &scalar) const;
@@ -110,8 +97,10 @@ namespace MtmMath {
         }
 
         /*
-         * Function that get function object f and uses it's () operator on each element in the vectors.
-         * It outputs the function object's * operator after iterating on all the vector's elements
+         * Function that get function object f and uses it's () operator on each
+         * element in the vectors.
+         * It outputs the function object's * operator after iterating on all
+         * the vector's elements
          */
         template<typename Func>
         T vecFunc(Func &f) const {
@@ -128,10 +117,8 @@ namespace MtmMath {
          */
         virtual void resize(Dimensions dim, const T &val = T()) {
             size_t cols = 1, rows = 1;
-            if ((is_column && dim.getRow() != 1)
-                || (!is_column && dim.getCol() != 1)
-                || dim.getCol() <= 0
-                || dim.getRow() <= 0) {
+            if ((is_column && dim.getRow() != 1)||(!is_column&&dim.getCol()!=1)
+                ||dim.getCol()<=0||dim.getRow()<=0){
                 if (is_column) {
                     rows = size;
                 } else {
@@ -218,7 +205,7 @@ namespace MtmMath {
         private:
             explicit nonzero_iterator(MtmVec *self, size_t startIndex) :
                     iterator(self, startIndex) {
-                if (startIndex!=self->end().getIndex() && this->operator*() == 0){
+                if (startIndex!=self->end().getIndex() && this->operator*()==0){
                     ++(*this);
                 }
             }
@@ -233,13 +220,6 @@ namespace MtmMath {
 
         nonzero_iterator nzend() {
             return nonzero_iterator(end());
-        }
-
-        //DEBUG
-        friend std::ostream& operator<<(std::ostream& outstream, MtmVec<T>& me){
-            std::string outstr("[");
-            for (const T& elem : me) outstr+=to_string(elem)+=", ";
-            return outstream << (outstr+=std::string("]"));
         }
 
         bool getIsColumn() const {
@@ -270,11 +250,11 @@ namespace MtmMath {
                 otherCols = other.size;
             }
             throw MtmExceptions::DimensionMismatch(Dimensions(rows, cols),
-                                                   Dimensions(otherRows, otherCols));
+                    Dimensions(otherRows, otherCols));
         }
         MtmVec<T> answer(*this);
         answer.setLock(false);
-        for (size_t i = firstIndex; i < size; ++i) answer[i] = (*this)[i] + other[i];
+        for (size_t i = firstIndex; i<size;++i) answer[i]=(*this)[i] + other[i];
         return answer;
     }
 
@@ -396,6 +376,4 @@ namespace MtmMath {
     }
 }
 
-#undef firstIndex //DEBUG
-#undef defaultElement //DEBUG
 #endif //EX3_MTMVEC_H

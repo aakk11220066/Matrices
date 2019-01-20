@@ -1,8 +1,6 @@
 #ifndef EX3_COMPLEX_H
 #define EX3_COMPLEX_H
 
-//DEBUG
-#include <string>
 
 namespace MtmMath {
     class Complex {
@@ -29,17 +27,8 @@ namespace MtmMath {
 
         bool operator!=(const Complex& c) const{
             return !((*this) == c);
-        } //Roi: added this
-
-        std::string to_string() const { //DEBUG
-            const int accuracy = 2;
-            return std::to_string(re).substr(0,accuracy)+=std::string("+")+=std::to_string(im).substr(0,accuracy)+=std::string("i");
         }
     };
-
-    std::ostream& operator<<(std::ostream& stream, const Complex& c){
-        return stream<<c.to_string();
-    }//DEBUG
 
     MtmMath::Complex operator+(const Complex &a, const Complex &b);
 

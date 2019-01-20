@@ -15,8 +15,11 @@ using std::endl;
 
 bool operator ==(MtmMat<int> &m1, MtmMat<int>& m2){
 
-    if(m1.getDimensions().getRow()!=m2.getDimensions().getRow() || m1.getDimensions().getCol()!=m2.getDimensions().getCol())
+    if(m1.getDimensions().getRow()!=m2.getDimensions().getRow()
+        || m1.getDimensions().getCol()!=m2.getDimensions().getCol()){
+
         return false;
+    }
 
     for(size_t i=0; i<m1.getDimensions().getRow(); i++) {
         for (size_t j = 0; j < m2.getDimensions().getCol(); j++) {
@@ -221,11 +224,11 @@ void testOperator(){
     MtmMat<int> v2(Dimensions(1, 3),1);
     MtmMat<int> m7(Dimensions(3, 3), 1);
     cout<<endl<<"m7 = ";
-    m7.printMatrix();
+//    m7.printMatrix();
     cout<<endl<<"v1 = "<<endl;
-    v1.print_vec();
+//    v1.print_vec();
     cout<<endl<<"v2 = "<<endl;
-    v2.printMatrix();
+//    v2.printMatrix();
     m6 = v1 * v2;
     assert(m6 == m7);
     m6 = v2 * v1;
