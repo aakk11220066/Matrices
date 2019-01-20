@@ -226,8 +226,8 @@ void testOperator(){
     v1.print_vec();
     cout<<endl<<"v2 = "<<endl;
     v2.printMatrix();
-    //m6 = v1 * v2
-    //assert(m6 == m7); //FIXME
+    m6 = v1 * v2;
+    assert(m6 == m7);
     m6 = v2 * v1;
     MtmMat<int> m8(Dimensions(1, 1), 3);
     assert(m6 == m8);

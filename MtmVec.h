@@ -67,6 +67,7 @@ namespace MtmMath {
                 throw MtmExceptions::OutOfMemory();
             }
             is_column = original.is_column;
+            locked = false;
             for (size_t i = firstIndex; i < original.size; ++i) {
                 (*this)[i] = original[i];
             }
