@@ -35,7 +35,7 @@ namespace MtmMath {
         explicit MtmVec(size_t m = 1, const T &val = T());
 
         //destructor
-        virtual ~MtmVec();
+        virtual ~MtmVec() noexcept;
 
         //copy constructor
         MtmVec<T>(const MtmVec<T> &original) : size(original.size) {
@@ -326,7 +326,7 @@ namespace MtmMath {
     }
 
     template<typename T>
-    MtmVec<T>::~MtmVec() {
+    MtmVec<T>::~MtmVec() noexcept {
         delete[] data;
     }
 
