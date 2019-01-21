@@ -173,11 +173,9 @@ namespace MtmMath {
         private:
             friend class MtmMat<T>;
 
-            template<T>
-            friend iterator begin();
+            friend iterator MtmMat::begin();
 
-            template<T>
-            friend iterator end();
+            friend iterator MtmMat::end();
 
             explicit iterator(MtmMat* self, size_t startIndex) :
                     self(self), linearIndex(startIndex) {}
