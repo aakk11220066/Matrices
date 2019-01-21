@@ -43,8 +43,12 @@ namespace MtmMath {
             *this = original;
         }
 
-        //constructor for normal/square matrices to triangular
+        //constructor for square matrices to triangular
         MtmMatTriag<T>(const MtmMatSq<T> &original);
+
+        //constructor for normal matrices to triangular
+        MtmMatTriag<T>(const MtmMat<T> &original) :
+                MtmMatTriag(MtmMatSq<T>(original)){}
 
         //destructor
         virtual ~MtmMatTriag<T>() noexcept = default;
