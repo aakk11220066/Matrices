@@ -119,17 +119,6 @@ ostream& operator<<(ostream& outStream, const Complex& num){
     outStream<<num.re<<"+"<<num.im<<"i";
     return outStream;
 }
-template <typename T>
-ostream& operator<<(ostream& outStream, const MtmMat<T>& mat){
-    outStream<<endl;
-    for (size_t i=0; i<mat.getDimensions().getRow(); ++i){
-        for (size_t j=0; j<mat.getDimensions().getCol(); ++j){
-            outStream<<mat[i][j]<<" ";
-        }
-        outStream<<endl;
-    }
-    return outStream;
-}
 
 void warmUp(){
     exceptionsTest();
@@ -183,7 +172,6 @@ void triangle_test(){
     catch (MtmExceptions::AccessIllegalElement& e){
         cout<< e.what() <<endl;
     }
-    cout<<"m = "<<m<<endl;
     assert(m[0][4]==6 and m[1][4]==6 and m[2][4]==6 and m[0][3]==1);
     m.transpose();
     MtmMatTriag<Complex> m2(5,1);

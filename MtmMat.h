@@ -8,6 +8,8 @@
 #include "MtmVec.h"
 #include "RootVector.h"
 
+#include <iostream> //TODO: delete me!
+
 using std::size_t;
 
 namespace MtmMath {
@@ -372,13 +374,14 @@ namespace MtmMath {
 
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol(),
                 maxDim = (rows > cols) ? rows : cols;
-        resize(Dimensions(maxDim, maxDim), defaultElement); //make matrix square
+        //make matrix square
+        MtmMat<T>::resize(Dimensions(maxDim, maxDim), defaultElement);
 
         bool wasLocked = this->isLocked();
         this->setLock(false);
         for (size_t i = firstIndex; i<maxDim; ++i){
             for (size_t j=i; j<maxDim; j++){
-                swap((*this)[i][j], (*this)[j][i]); //FIXME
+                swap((*this)[i][j], (*this)[j][i]);
             }
         }
         this->setLock(wasLocked);
@@ -464,5 +467,19 @@ namespace MtmMath {
     }
 }
 
+//TODO: delete me!
+using namespace std;
+using MtmMath::MtmMat;
+template <typename T>
+ostream& operator<<(ostream& outStream, const MtmMat<T>& mat){
+    outStream<<endl;
+    for (size_t i=0; i<mat.getDimensions().getRow(); ++i){
+        for (size_t j=0; j<mat.getDimensions().getCol(); ++j){
+            outStream<<mat[i][j]<<" ";
+        }
+        outStream<<endl;
+    }
+    return outStream;
+}
 
 #endif //EX3_MTMMAT_H
