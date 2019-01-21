@@ -19,6 +19,10 @@ namespace MtmMath {
         MtmVec *self;
         T *data;
         bool locked=false;
+    public:
+        bool isLocked() const;
+
+    private:
         size_t lockStartIndex = 0;
         size_t lockEndIndex = size-1;
     protected:
@@ -375,6 +379,11 @@ namespace MtmMath {
     template <typename T>
     typename MtmVec<T>::iterator MtmVec<T>::end(){
         return iterator(this, size);
+    }
+
+    template<typename T>
+    bool MtmVec<T>::isLocked() const {
+        return locked;
     }
 }
 

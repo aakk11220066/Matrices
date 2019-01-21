@@ -1,9 +1,11 @@
 #ifndef EX3_COMPLEX_H
 #define EX3_COMPLEX_H
 
+#include <iostream> //TODO: delete me!
 
 namespace MtmMath {
     class Complex {
+    public: //TODO: delete me!
         double re, im;
     public:
         Complex(double r = 0, double i = 0) :

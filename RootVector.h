@@ -35,6 +35,11 @@ namespace MtmMath {
         //const operator[]
         virtual const MtmVec<T>& operator[](size_t index) const;
 
+        bool isLocked(){
+            if (size == 0) return false;
+            return (*this)[0].isLocked();
+        }
+
         void setLock(bool newStatus){
             for (size_t i=0; i<size; i++){
                 (*this)[i].MtmVec<T>::setLock(newStatus);

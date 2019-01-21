@@ -369,18 +369,19 @@ namespace MtmMath {
 
     template<typename T>
     void MtmMat<T>::transpose() {
-        //POTENTIAL ERROR: replacing matrix (rather than modifying) may reset
-        // additional properties of subclasses
 
         const size_t rows = dimensions.getRow(), cols = dimensions.getCol(),
                 maxDim = (rows > cols) ? rows : cols;
         resize(Dimensions(maxDim, maxDim), defaultElement); //make matrix square
 
+        bool wasLocked = this->isLocked();
+        this->setLock(false);
         for (size_t i = firstIndex; i<maxDim; ++i){
             for (size_t j=i; j<maxDim; j++){
-                swap((*this)[i][j], (*this)[j][i]);
+                swap((*this)[i][j], (*this)[j][i]); //FIXME
             }
         }
+        this->setLock(wasLocked);
 
         resize(Dimensions(cols, rows), errorValue);
     }
@@ -430,9 +431,10 @@ namespace MtmMath {
                 replacement[row][col] = transferElement;
             }
         }
+        bool wasLocked = (*this).isLocked();
         (*this).setLock(false);
         (*this) = replacement;
-        (*this).setLock(true);
+        (*this).setLock(wasLocked);
     }
 
     template<typename T>
