@@ -111,6 +111,7 @@ void iterators() {
         assert (res_nz_it[i]==(*it));
         ++i;
     }
+    if (res_it == res_nz_it) cout << "hi" << endl;
 }
 
 using std::ostream;
@@ -255,6 +256,7 @@ void triangle_test(){
     for(int i :res7){
         assert(i==vec[k]);
         k++;
+        if (i== 0) cout << "yo" << endl;
     }
     assert(k==vec.size());
     k=0;

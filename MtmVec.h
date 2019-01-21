@@ -334,7 +334,7 @@ namespace MtmMath {
     class MtmVec<T>::iterator{
     protected:
         size_t index=0;
-        MtmVec* self = NULL;
+        MtmVec* self = nullptr;
 
         iterator(MtmVec<T>* self, size_t startIndex=0) :
                 index(startIndex), self(self) {};
