@@ -92,7 +92,7 @@ namespace MtmMath {
         virtual MtmVec<T> operator+(const MtmVec<T> other) const;
 
         //negation
-        MtmVec<T> operator-() {
+        MtmVec<T> operator-() const {
             return (-1) * (*this);
         }
 
@@ -266,6 +266,7 @@ namespace MtmMath {
             e.reverseDescription();
             throwError(e);
         }
+        return vector; //THIS LINE SHOULD NEVER BE REACHED!!!
     }
 
     template<typename T>
@@ -288,6 +289,7 @@ namespace MtmMath {
             e.reverseDescription();
             throwError(e);
         }
+        return vector; //THIS LINE SHOULD NEVER BE REACHED!!!
     }
 
     template <typename T>

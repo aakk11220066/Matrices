@@ -5,34 +5,12 @@
 #include "MtmMatSq.h"
 #include "MtmMatTriag.h"
 #include "Complex.h"
+#include <vector>
 
 #include <assert.h>
 using namespace MtmMath;
 using std::cout;
 using std::endl;
-
-
-
-bool operator ==(MtmMat<int> &m1, MtmMat<int>& m2){
-
-    if(m1.getDimensions().getRow()!=m2.getDimensions().getRow()
-        || m1.getDimensions().getCol()!=m2.getDimensions().getCol()){
-
-        return false;
-    }
-
-    for(size_t i=0; i<m1.getDimensions().getRow(); i++) {
-        for (size_t j = 0; j < m2.getDimensions().getCol(); j++) {
-
-            if(m1[i][j]!=m2[i][j])
-                return false;
-
-        }
-    }
-
-    return true;
-
-}
 
 void exceptionsTest() {
     try {
@@ -76,76 +54,7 @@ void exceptionsTest() {
     catch (MtmExceptions::AccessIllegalElement& e){
         cout<< e.what() <<endl;
     }
-    try{
-
-        MtmMatTriag<int>m(5,0);
-        m[1][0]=1;
-
-    }
-    catch (MtmExceptions::AccessIllegalElement& e){
-        cout<< e.what() <<endl;
-    }
-
-    try{
-
-        MtmMatTriag<int>m(5,0,false);
-        m[0][1]=1;
-
-    }
-    catch (MtmExceptions::AccessIllegalElement& e){
-        cout<< e.what() <<endl;
-    }
-
-    try{
-
-        MtmMatSq<int>m(5,0);
-        m[0][1]=1;
-        m[1][0]=1;
-
-        MtmMatTriag<int>m2(m);
-
-    }
-    catch (MtmExceptions::IllegalInitialization& e){
-        cout<< e.what() <<endl;
-    }
-
-    try{
-
-        MtmMatTriag<int>m(5,0);
-        m[1][0]=1;
-
-    }
-    catch (MtmExceptions::AccessIllegalElement& e){
-        cout<< e.what() <<endl;
-    }
-
-    try{
-
-        MtmMatSq<int>m(0,0);
-
-
-    }
-    catch (MtmExceptions::IllegalInitialization& e){
-        cout<< e.what() <<endl;
-    }
-
-    try {
-        MtmMat<int> m1(Dimensions(0,3),5);
-        assert(false);
-    }
-    catch (MtmExceptions::IllegalInitialization& e){
-        cout<< e.what() <<endl;
-    }
-
-    try {
-        MtmMat<int> m1(Dimensions(3,0),5);
-        assert(false);
-    }
-    catch (MtmExceptions::IllegalInitialization& e){
-        cout<< e.what() <<endl;
-    }
 }
-
 
 void constructors() {
     MtmVec<int> v1(5,3);
@@ -161,102 +70,6 @@ void dataTypes() {
     MtmVec<Complex> v4(5,Complex(3,4));
 }
 
-void testOperator(){
-
-    MtmMat<int> m1(Dimensions(2, 5), 0);
-    MtmMat<int> m2(Dimensions(2, 5), 1);
-    m2[1][3] = 4;
-    m2[0][2] = 9;
-    m1[0][0] = 1;
-    m1 = m1 + m2;
-    m2[0][0] += 1;
-    assert(m1 == m2);
-    m1 = m1 + 2;
-    assert(m1[0][0] == 4);
-    assert(m1[1][3] == 6);
-    m1 = m1 - 2;
-    assert(m1 == m2);
-    m1 = 2 + m1;
-    assert(m1[0][0] == 4);
-    assert(m1[1][3] == 6);
-    m1 = -2 + m1;
-    assert(m1 == m2);
-    MtmMat<int> m3(Dimensions(4, 1), 1);
-    m3[1][0] = 2;
-    m3[2][0] = 3;
-    m3[3][0] = 4;
-    //cout<<"m3 before reshape";
-    //m3.printMatrix();
-    MtmMat<int> m4(m3);
-    m3.reshape(Dimensions(1, 4));
-    //cout<<"m3 after reshape, before transpose";
-    //m3.printMatrix();
-    m3.transpose();
-    assert(m3 == m4);
-    m3.reshape(Dimensions(4, 1));
-    //cout<<endl<<"m3 after second reshape";
-    //m3.printMatrix();
-    assert(m3 == m4);
-    MtmMat<int> m5(Dimensions(6, 2), 1);
-    MtmMat<int> m6(m5);
-    //cout<<endl<<"m6 = ";
-    //m6.printMatrix();
-    m6.transpose();
-    //cout<<endl<<"m6 after transpose = ";
-    //m6.printMatrix();
-    //cout<<endl<<"m5 = ";
-    //m5.printMatrix();
-    m5[5][1] = 3;
-    m5[5][0] = 2;
-    m5[4][0] = 7;
-    //cout<<endl<<"m5 after changes= ";
-    //m5.printMatrix();
-    m5.reshape(Dimensions(2,6));
-    //cout<<endl<<"m5 after reshape = ";
-    //m5.printMatrix();
-    m6[0][2]=7;m6[1][2]=2; m6[1][5]=3;
-    //printm(m6);
-    //printm(m5);
-    assert(m5 == m6);
-    m6.transpose();
-    m5.reshape(Dimensions(6, 2));
-    MtmVec<int> v1(3, 1);
-    MtmMat<int> v2(Dimensions(1, 3),1);
-    MtmMat<int> m7(Dimensions(3, 3), 1);
-    cout<<endl<<"m7 = ";
-//    m7.printMatrix();
-    cout<<endl<<"v1 = "<<endl;
-//    v1.print_vec();
-    cout<<endl<<"v2 = "<<endl;
-//    v2.printMatrix();
-    m6 = v1 * v2;
-    assert(m6 == m7);
-    m6 = v2 * v1;
-    MtmMat<int> m8(Dimensions(1, 1), 3);
-    assert(m6 == m8);
-    MtmMat<int> m9(Dimensions(2, 3), 1);
-    m9[0][0] = 1;
-    m9[1][0] = 1;
-    m9[0][1] = 2;
-    m9[1][1] = 2;
-    m9[0][2] = 3;
-    m9[1][2] = 3;
-    v1[1] = 2;
-    v1[2] = 3;
-    MtmMat<int> m10(Dimensions(2, 1), 14);
-    m4 = m9 * v1;
-    assert(m4 == m10);
-    MtmMat<int> m11(m9);
-    m11.transpose();
-    m6 = m9 * m11;
-    MtmMat<int> res(Dimensions(2, 2), 14);
-    assert(m6 == res);
-    MtmMat<int> m12(Dimensions(3, 6), 1);
-    m8 = m7 * m12;
-    MtmMat<int> res2(Dimensions(3, 6), 3);
-
-}
-
 void FuncExample() {
     class maxAbsolute {
         int currMax;
@@ -268,7 +81,6 @@ void FuncExample() {
         }
         int operator*() { return  currMax;}
     };
-
     MtmVec<int> v(5,0);
     v[1]=3;v[2]=-7;v[3]=-1;v[4]=2;
     MtmMat<int> m(Dimensions(2,3),0);
@@ -287,7 +99,6 @@ void iterators() {
 
     int res_it[]={0,1,0,2};
     int res_nz_it[]={1,2};
-
     int i=0;
     for (MtmMatSq<int>::iterator it=m.begin();it!=m.end();++it) {
         assert (res_it[i]==(*it));
@@ -296,49 +107,247 @@ void iterators() {
 
     i=0;
     for (MtmMatSq<int>::nonzero_iterator it=m.nzbegin();it!=m.nzend();++it) {
-
-        int x = *it;
-        assert (res_nz_it[i]==(x));
+        assert (res_nz_it[i]==(*it));
         ++i;
     }
-
-    i=0;
-
-    MtmMatTriag<int> m1(5,1,false);
-
-    int res[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
-    for(MtmMatTriag<int>::nonzero_iterator it=m1.nzbegin();it!=m1.end();++it) {
-
-        int t1 = res[i];
-        int t2 = *it;
-        *it=15;
-        assert(t1 == t2 && 15>i);
-        i++;
-        //5
-    }
-
-    MtmMatTriag<int> m2(5,0,false);
-    m2[4][4]=2;
-    MtmMatTriag<int>::nonzero_iterator it=m2.nzbegin();
-    int t = *it;
-    assert(t==2);
-    ++it;
-    assert(it==m2.nzend());
-
-
 }
 
-
-
-int main() {
+void warmUp(){
+    exceptionsTest();
+    iterators();
     constructors();
     dataTypes();
     FuncExample();
-    iterators();
-    testOperator();
-    exceptionsTest();
+    cout<<"warmUp Done! \n";
+}
+void triangle_test(){
+    try {
+        MtmMatTriag<Complex> m(4,1, false);
+        m[4][3]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    try {
+        MtmMatTriag<Complex> m(4,1, false);
+        m[0][3]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    MtmMatTriag<Complex> m(4,1, false);
+    m[2][1]=5;
+    assert(m[2][1]==5 and m[2][0]==1);
+    m.resize(Dimensions(5,5),6);
+    assert(m[4][0]==6 and m[4][1]==6 and m[4][2]==6 and m[3][0]==1);
+    try {
+        m[0][4]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    m.transpose();
+    try {
+        m[4][0]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    try {
+        m[-1][0]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    assert(m[0][4]==6 and m[1][4]==6 and m[2][4]==6 and m[0][3]==1);
+    m.transpose();
+    MtmMatTriag<Complex> m2(5,1);
+    MtmMat<Complex> res(m+m2);
+    assert(res[0][4]==1 and res[4][1]==6 and res[4][2]==6 and res[0][3]==1);
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j <5 ; ++j) {
+            res[i][j];
+        }
+    }
+    MtmMatTriag<Complex> mt(1,3);
+    MtmVec<Complex> v(1,3);
+    MtmMat<Complex> res2(mt+v);
+    assert(res2[0][0]==6);
+    MtmMat<Complex> res3(m+0);
+    for (int k = 0; k < 5; ++k) {
+        for (int i = 0; i < 5; ++i) {
+            res3[k][i];
+        }
+    }
+    MtmMat<Complex> res4=mt*v;
+    assert(res4[0][0]==9);
+    MtmMat<Complex> res5=m*5;
+    assert(res5[0][0]==5 and res5[2][1]==25 and res5[4][3]==30 and res5[0][2]==0);
+    MtmMatTriag<Complex> newM(res5);
+    assert(res5[0][0]==5 and res5[2][1]==25 and res5[4][3]==30);
+    try {
+        newM[0][2]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    try {
+        res5[0][1]=1;
+        MtmMatTriag<Complex> new2(res5);
+        assert(false);
+    }
+    catch (MtmExceptions::IllegalInitialization& e){
+        cout<< e.what() <<endl;
+    }
+    res5.transpose();
+    res5[1][0]=0;
+    MtmMatTriag<Complex> new2(res5);
+    assert(new2[0][2]!=0);
+    try {
+        new2[2][0]=5;
+        assert(false);
+    }
+    catch (MtmExceptions::AccessIllegalElement& e){
+        cout<< e.what() <<endl;
+    }
+    const MtmMatTriag<Complex> const_tria(new2);
+    for (int l = 0; l < 5; ++l) {
+        for (int i = 0; i < 5; ++i) {
+            const_tria[l][i];
+        }
+    }
+    try {
+        MtmMatTriag<Complex> matTriag(3,1);
+        matTriag.reshape(Dimensions(3,3));
+    }
+    catch (MtmExceptions::ChangeMatFail& e){
+        cout<< e.what() <<endl;
+    }
+    MtmMatTriag<int> mat1(3,1, false);
+    MtmMatTriag<int> mat2(3,1);
+    mat1.resize(Dimensions(4,4),0);
+    mat2.resize(Dimensions(4,4),2);
+    MtmMat<int> res7(mat1*mat2);
+    res7.transpose();
+    res7=res7+1;
+    res7=1+res7;
+    res7=res7*2;
+    res7=-res7;
+    res7=1-res7;
+    res7=2*res7;
+    res7=res7-mat2;
+    MtmMatTriag<int> m9(4,8,false);
+    m9.transpose();
+    m9[3][3]=0;
+    res7=res7-m9;
+    std::vector<int> vec={5,14,14,18,5,9,18,26,5,9,13,34,0,0,0,8};
+    std::vector<int> nz_vec={5,14,14,18,5,9,18,26,5,9,13,34,8};
+    int k=0;
+    for(int i :res7){
+        assert(i==vec[k]);
+        k++;
+    }
+    assert(k==vec.size());
+    k=0;
+    for (MtmMat<int>::nonzero_iterator n = res7.nzbegin(); n != res7.nzend(); ++n) {
+        assert(*n==nz_vec[k]);
+        k++;
+    }
+    assert(k==nz_vec.size());
 
 
+    cout<<"triangle test Done!! \n";
+
+}
+
+void vector_test(){
+    MtmVec<int> v(5,1);
+    try {
+        v.resize(Dimensions(1, 5), 2);
+        assert(false);
+    }
+    catch (MtmExceptions::ChangeMatFail& e){
+        cout<< e.what() <<endl;
+    }
+    MtmVec<int> v1(5,2);
+    MtmVec<int> res=v1-v;
+    res.resize(Dimensions(8,1),0);
+    res.resize(Dimensions(10,1),1);
+    for (int i = 0; i < 5; ++i) {
+        assert(res[i]==1);
+    }
+    int i=0;
+    for(MtmVec<int>::nonzero_iterator nz_it=res.nzbegin();nz_it!=res.nzend();++nz_it,i++){
+        assert(*nz_it==1);
+    }
+    assert(i==7);
+    try {
+        MtmVec<int> v10(1,0);
+        MtmVec<int> v11(1,0);
+        v11.transpose();
+        v10+v11;
+        assert(false);
+    }
+    catch (MtmExceptions::DimensionMismatch& e){
+        cout<< e.what() <<endl;
+    }
+    MtmVec<int> v2(4,2);
+    MtmVec<int> v3(6,4);
+    v2.resize(Dimensions(7,1),4);
+    v3.transpose();
+    v3.resize(Dimensions(1,7),4);
+    for (int j = 0; j < 6; ++j) {
+        v2[j]=v3[j];
+    }
+    try {
+        v2+v3;
+        assert(false);
+    }
+    catch (MtmExceptions::DimensionMismatch& e){
+        cout<< e.what() <<endl;
+    }
+    MtmVec<int>::iterator it1=v2.begin();
+    int k = 0;
+    for (MtmVec<int>::iterator it2=v3.begin(); it2!=v3.end(); ++it1,++it2,++k) {
+        assert(*it1==*it2);
+        v3=1+v3;
+        assert(v3[0]==5);
+        v3=v3-1;
+        assert(v3[0]==4);
+        v3=v3*(-1);
+        assert(v3[0]==-4);
+        v3=(-1)*v3;
+        assert(v3[0]==4);
+        v3=1-v3;
+        assert(v3[0]==-3);
+        v3=v3-1;
+        assert(v3[0]==-4);
+        v3=-v3;
+    }
+    assert(k==7);
+    v3.resize(Dimensions(1,10),0);
+    v3.resize(Dimensions(1,20),4);
+    v3.resize(Dimensions(1,22),0);
+    k=0;
+    for (MtmVec<int>::nonzero_iterator it2=v3.nzbegin(); it2!=v3.nzend(); ++it2,++k) {
+        assert(*it2==4);
+    }
+    assert(k==17);
+    cout<<"vector test done!\n";
+}
+
+int main() {
+    warmUp();
+    triangle_test();
+    vector_test();
+    cout<<"tests done!\n";
     return 0;
 
 }
+

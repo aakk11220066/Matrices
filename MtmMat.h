@@ -7,7 +7,6 @@
 #include "Auxilaries.h"
 #include "MtmVec.h"
 #include "RootVector.h"
-#include <cassert>
 
 using std::size_t;
 
@@ -278,7 +277,7 @@ namespace MtmMath {
             e.reverseDescription();
             throwError(e);
         }
-
+        return matrix; //THIS LINE SHOULD NEVER BE REACHED!!!
     }
 
     //matrix-vector addition (promotion on hold because class is generic)
