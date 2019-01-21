@@ -39,7 +39,9 @@ namespace MtmMath {
         MtmMatTriag<T>(size_t m, const T &val = T(), bool isUpper_t = true);
 
         //copy constructor
-        MtmMatTriag<T>(const MtmMatTriag &original) = default;
+        MtmMatTriag<T>(const MtmMatTriag &original) : MtmMatSq<T>(original){
+            *this = original;
+        }
 
         //constructor for normal/square matrices to triangular
         MtmMatTriag<T>(const MtmMatSq<T> &original);
@@ -48,7 +50,11 @@ namespace MtmMath {
         virtual ~MtmMatTriag<T>() = default;
 
         //operator=
-        virtual MtmMatTriag<T> &operator=(const MtmMatTriag &) = default;
+        virtual MtmMatTriag<T> &operator=(const MtmMatTriag& original){
+            upper = original.upper;
+            MtmMatSq<T>::operator=(original);
+            this->setLock(true);
+        }
 
         //override: note that triangle is now opposite kind of triangle
         void transpose() override {

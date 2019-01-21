@@ -52,7 +52,9 @@ namespace MtmMath {
         explicit MtmMat<T>(Dimensions dim_t, const T &val = T());
 
         //copy constructor
-        MtmMat<T>(const MtmMat<T> &original) = default;
+        MtmMat<T>(const MtmMat<T> &original) : RootVector<T>(original) {
+            *this = original;
+        }
 
         //vector-to-matrix constructor
         explicit MtmMat<T>(const MtmVec<T> &original);
@@ -61,6 +63,7 @@ namespace MtmMath {
         virtual MtmMat<T> &operator=(const MtmMat &original){
             if (this == &original) return *this;
             dimensions = original.dimensions;
+            this->setLock(false);
             this->RootVector<T>::operator=(original);
             return *this;
         }

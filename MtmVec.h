@@ -121,7 +121,7 @@ namespace MtmMath {
          */
         virtual void resize(Dimensions dim, const T &val = T()) {
             size_t cols = 1, rows = 1;
-            if ((is_column && dim.getRow() != 1)||(!is_column&&dim.getCol()!=1)
+            if ((!is_column && dim.getRow() != 1)||(is_column&&dim.getCol()!=1)
                 ||dim.getCol()<=0||dim.getRow()<=0){
                 if (is_column) {
                     rows = size;
