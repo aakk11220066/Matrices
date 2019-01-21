@@ -336,8 +336,8 @@ namespace MtmMath {
         size_t index=0;
         MtmVec* self = NULL;
 
-        iterator(MtmVec<T>* self, size_t startIndex=0) : self(self),
-                                                         index(startIndex){};
+        iterator(MtmVec<T>* self, size_t startIndex=0) :
+                index(startIndex), self(self) {};
         friend iterator MtmVec::begin();
 
         friend iterator MtmVec::end();
