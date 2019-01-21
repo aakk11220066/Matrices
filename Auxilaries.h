@@ -9,7 +9,8 @@ namespace MtmMath {
     class Dimensions {
         size_t row, col;
     public:
-        Dimensions(size_t row_t, size_t col_t) : row(row_t), col(col_t) {}
+        Dimensions(size_t row_t, size_t col_t) : row(row_t), col
+        (col_t) {}
         std::string to_string() const {
             return "(" + std::to_string(row) + "," + std::to_string(col) + ")";
         }

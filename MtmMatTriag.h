@@ -47,13 +47,14 @@ namespace MtmMath {
         MtmMatTriag<T>(const MtmMatSq<T> &original);
 
         //destructor
-        virtual ~MtmMatTriag<T>() = default;
+        virtual ~MtmMatTriag<T>() noexcept = default;
 
         //operator=
         virtual MtmMatTriag<T> &operator=(const MtmMatTriag& original){
             upper = original.upper;
             MtmMatSq<T>::operator=(original);
             this->setLock(true);
+            return *this;
         }
 
         //override: note that triangle is now opposite kind of triangle

@@ -33,7 +33,7 @@ namespace MtmMath {
         }
 
         //destructor
-        virtual ~MtmMatSq() = default;
+        virtual ~MtmMatSq() noexcept = default;
 
         //operator=
         virtual MtmMatSq& operator=(const MtmMatSq& original) = default;

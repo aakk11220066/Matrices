@@ -24,7 +24,7 @@ namespace MtmMath {
         RootVector(const RootVector<T>& original);
 
         //dtor
-        virtual ~RootVector() = default;
+        virtual ~RootVector() noexcept = default;
 
         //operator=
         virtual RootVector<T>& operator=(const RootVector<T>& original)=default;

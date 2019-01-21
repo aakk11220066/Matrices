@@ -69,7 +69,7 @@ namespace MtmMath {
         }
 
         //destructor (Note: MtmVec matrix will destroy its own sub-lists)
-        virtual ~MtmMat<T>() = default;
+        virtual ~MtmMat<T>() noexcept = default;
 
         //operator[] inherited from MtmVec
 
