@@ -8,7 +8,6 @@
 #include "MtmVec.h"
 #include "RootVector.h"
 
-#include <iostream> //TODO: delete me!
 
 using std::size_t;
 
@@ -52,7 +51,9 @@ namespace MtmMath {
         explicit MtmMat<T>(Dimensions dim_t, const T &val = T());
 
         //copy constructor
-        MtmMat<T>(const MtmMat<T> &original) : RootVector<T>(original) {
+        MtmMat<T>(const MtmMat<T> &original) : RootVector<T>(original),
+                dimensions(original.dimensions) {
+
             *this = original;
         }
 
@@ -63,8 +64,8 @@ namespace MtmMath {
         virtual MtmMat<T> &operator=(const MtmMat &original){
             if (this == &original) return *this;
             dimensions = original.dimensions;
-            this->setLock(false);
             this->RootVector<T>::operator=(original);
+            this->setLock(false);
             return *this;
         }
 
@@ -105,10 +106,10 @@ namespace MtmMath {
         //scalar multiplication
         MtmMat<T> operator*(const T& scalar) const {
             MtmMat<T> answer(*this);
-            answer.setLock(false);
             for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
                 answer[row] = (*this)[row] * scalar;
             }
+            answer.setLock(false);
             return answer;
         }
 
@@ -133,10 +134,10 @@ namespace MtmMath {
         //scalar addition
         MtmMat<T> operator+(const T& scalar) const {
             MtmMat<T> answer(*this);
-            answer.setLock(false);
             for (size_t row = firstIndex; row<dimensions.getRow(); ++row){
                 answer[row] = (*this)[row] + scalar;
             }
+            answer.setLock(false);
             return answer;
         }
 
@@ -468,21 +469,6 @@ namespace MtmMath {
         }
         return answer;
     }
-}
-
-//TODO: delete me!
-using namespace std;
-using MtmMath::MtmMat;
-template <typename T>
-ostream& operator<<(ostream& outStream, const MtmMat<T>& mat){
-    outStream<<endl;
-    for (size_t i=0; i<mat.getDimensions().getRow(); ++i){
-        for (size_t j=0; j<mat.getDimensions().getCol(); ++j){
-            outStream<<mat[i][j]<<" ";
-        }
-        outStream<<endl;
-    }
-    return outStream;
 }
 
 #endif //EX3_MTMMAT_H

@@ -43,8 +43,12 @@ namespace MtmMath {
             *this = original;
         }
 
-        //constructor for normal/square matrices to triangular
+        //constructor for square matrices to triangular
         MtmMatTriag<T>(const MtmMatSq<T> &original);
+
+        //constructor for normal matrices to triangular
+        MtmMatTriag<T>(const MtmMat<T> &original) :
+                MtmMatTriag(MtmMatSq<T>(original)){}
 
         //destructor
         virtual ~MtmMatTriag<T>() = default;
@@ -54,6 +58,7 @@ namespace MtmMath {
             upper = original.upper;
             MtmMatSq<T>::operator=(original);
             this->setLock(true);
+            return *this;
         }
 
         //override: note that triangle is now opposite kind of triangle
